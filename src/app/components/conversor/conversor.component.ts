@@ -1,12 +1,16 @@
-import { Component } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { Component, OnInit } from '@angular/core';
+import { tabla_bcdGray } from 'src/data/tablaBCDgray';
+import { tabla_bchGray } from 'src/data/tablaBCHgray';
+import { tabla_bcoGray } from 'src/data/tablaBCOgray';
+import { tabla_john_decimal } from 'src/data/tablaJhonDecimal';
 
 @Component({
   selector: 'app-conversor',
   templateUrl: './conversor.component.html',
   styleUrls: ['./conversor.component.css']
 })
-export class ConversorComponent {
+export class ConversorComponent implements OnInit {
 
   decimal!: string
   octal!: string
@@ -34,6 +38,14 @@ export class ConversorComponent {
   hamingCorrecto!: string
   hamingIncorrecto: boolean = false
   text: string =""
+
+  //TABLAS
+  tablaJhonDec!: Array<any>
+
+  tablaBCOgray!: Array<any>
+  tablaBCDgray!: Array<any>
+  tablaBCHgray!: Array<any>
+
 
   ubicaciones: any[] = [
     { name: 'Prefijo', key: 'P' },
@@ -147,7 +159,18 @@ export class ConversorComponent {
   ];
   selectedTipo: any = null
 
+
   constructor(private ms: MessageService) { }
+
+  ngOnInit(): void {
+    
+    this.tablaJhonDec = tabla_john_decimal;
+    this.tablaBCOgray = tabla_bcoGray;
+    this.tablaBCDgray = tabla_bcdGray;
+    this.tablaBCHgray = tabla_bchGray;
+
+  }
+
 
   transformar(op: string) {
     switch (op) {
@@ -157,10 +180,19 @@ export class ConversorComponent {
         this.hexa = dec.toString(16).toUpperCase()
         this.binNat = dec.toString(2)
         this.gray = this.binaryToGray(this.binNat)
-        console.log()
+
         this.ascii = String.fromCharCode(dec)
+       
+       
+        this.johnson = this.decimalToJhonson(this.decimal)
+
+        
         this.bitParidad = this.insertarBitParidad(this.binNat, this.paridad, this.selectedUbicacion)
-        //this.calcularHamingGPT(this.binNat,"to")
+        
+        this.bcoG = this.decimalToBcoGray(this.octal)
+        this.bcdG = this.decimalToBcdGray(this.decimal)
+        this.bchG = this.decimalToBchGray(this.hexa)//verif
+
 
         break;
       case "O":
@@ -616,6 +648,7 @@ console.log(op)
   }
 
 
+
   grayToBinary(a: string){
     var size = a.length
     var num = a[0]
@@ -628,6 +661,72 @@ console.log(op)
     }
     return num
   }
+
+
+  //------------------------------------------------GAY------------------------------------------------------------
+
+  decimalToBcoGray(a: string):string{
+
+    let res = "";
+    let y: number
+
+    for(let i=0; i<a.length ; i++){
+        y = Number(a[i])
+      res += "-"+this.tablaBCOgray[y].label
+    }
+
+    return res;
+  }
+  decimalToBcdGray(a: string):string{
+
+    let res = "";
+    let y: number
+
+    for(let i=0; i<a.length ; i++){
+        y = Number(a[i])
+      res += "-"+this.tablaBCDgray[y].label
+    }
+
+    return res;
+  }
+  decimalToBchGray(a: string):string{
+
+    let aux = ["A","B","C","D","E","F"]
+
+    let res = "";
+    let y: number
+
+    for(let i=0; i<a.length ; i++){
+      
+      if(aux.indexOf(a[i])===-1){
+        y = Number(a[i])
+        res += "-"+this.tablaBCHgray[y].label
+      }else{
+        y = aux.indexOf(a[i]);
+        res += "-"+this.tablaBCHgray[y+10].label
+      }
+
+    }
+
+    return res;
+  }
+
+  //------------------------------------------------GAY------------------------------------------------------------
+
+  decimalToJhonson(a: string):string{
+
+    let res = "";
+
+    for(let i=0; i<a.length ; i++){
+    
+      var y: number = Number(a[i])
+
+      res += "-"+this.tablaJhonDec[y].label
+    }
+
+    return res;
+  }
+
 
   insertarBitParidad(a: string, par: boolean, lugar: string) {
     var completo = ""
