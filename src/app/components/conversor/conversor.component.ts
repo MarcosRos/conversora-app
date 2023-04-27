@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { tabla_bcdGray } from 'src/data/tablaBCDgray';
+import { tabla_bchGray } from 'src/data/tablaBCHgray';
+import { tabla_bcoGray } from 'src/data/tablaBCOgray';
 import { tabla_john_decimal } from 'src/data/tablaJhonDecimal';
 
 @Component({
@@ -36,6 +39,10 @@ export class ConversorComponent implements OnInit {
 
   //TABLAS
   tablaJhonDec!: Array<any>
+
+  tablaBCOgray!: Array<any>
+  tablaBCDgray!: Array<any>
+  tablaBCHgray!: Array<any>
 
 
   ubicaciones: any[] = [
@@ -154,6 +161,9 @@ export class ConversorComponent implements OnInit {
   ngOnInit(): void {
     
     this.tablaJhonDec = tabla_john_decimal;
+    this.tablaBCOgray = tabla_bcoGray;
+    this.tablaBCDgray = tabla_bcdGray;
+    this.tablaBCHgray = tabla_bchGray;
 
   }
 
@@ -169,6 +179,10 @@ export class ConversorComponent implements OnInit {
 
         this.ascii = String.fromCharCode(dec)
         this.bitParidad = this.insertarBitParidad(this.binNat, this.paridad, this.selectedUbicacion)
+        
+        this.bcoG = this.decimalToBcoGray(this.octal)
+        this.bcdG = this.decimalToBcdGray(this.decimal)
+        this.bchG = this.decimalToBchGray(this.hexa)//verif
 
         break;
       case "octal":
@@ -491,9 +505,57 @@ export class ConversorComponent implements OnInit {
     return num
   }
 
+  //------------------------------------------------GAY------------------------------------------------------------
+
+  decimalToBcoGray(a: string):string{
+
+    let res = "";
+    let y: number
+
+    for(let i=0; i<a.length ; i++){
+        y = Number(a[i])
+      res += "-"+this.tablaBCOgray[y].label
+    }
+
+    return res;
+  }
+  decimalToBcdGray(a: string):string{
+
+    let res = "";
+    let y: number
+
+    for(let i=0; i<a.length ; i++){
+        y = Number(a[i])
+      res += "-"+this.tablaBCDgray[y].label
+    }
+
+    return res;
+  }
+  decimalToBchGray(a: string):string{
+
+    let aux = ["A","B","C","D","E","F"]
+
+    let res = "";
+    let y: number
+
+    for(let i=0; i<a.length ; i++){
+      
+      if(aux.indexOf(a[i])===-1){
+        y = Number(a[i])
+        res += "-"+this.tablaBCHgray[y].label
+      }else{
+        y = aux.indexOf(a[i]);
+        res += "-"+this.tablaBCHgray[y].label
+      }
+
+    }
+
+    return res;
+  }
+
+  //------------------------------------------------GAY------------------------------------------------------------
+
   decimalToJhonson(a: string):string{
-    
-    let ax = ["0","1","2","3","4","5","6","7","8","9"]
 
     let res = "";
 
