@@ -15,6 +15,10 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { FieldsetModule } from 'primeng/fieldset';
 import { SlideMenuModule } from 'primeng/slidemenu';
 import { AccordionModule } from 'primeng/accordion';
+import { ToastModule } from 'primeng/toast';
+
+//Providers
+import { MessageService } from 'primeng/api';
 
 @NgModule({
   declarations: [
@@ -23,9 +27,9 @@ import { AccordionModule } from 'primeng/accordion';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,BrowserAnimationsModule, FormsModule, ReactiveFormsModule, ButtonModule,InputTextModule,ToggleButtonModule,CardModule,RadioButtonModule,FieldsetModule,SlideMenuModule,AccordionModule
+    AppRoutingModule,BrowserAnimationsModule, FormsModule, ReactiveFormsModule, ButtonModule,InputTextModule,ToggleButtonModule,CardModule,RadioButtonModule,FieldsetModule,SlideMenuModule,AccordionModule, ToastModule
   ],
-  providers: [],
+  providers: [MessageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

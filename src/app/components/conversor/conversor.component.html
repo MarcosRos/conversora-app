@@ -1,3 +1,4 @@
+<p-toast></p-toast>
 <div class="grid">
     <div class="col-12 p-fluid">
         <p-card header="Conversor de unidades para OC">
@@ -5,37 +6,37 @@
                 <div class="mb-3">
                     <label for="Decimal" class="form-label">Decimal</label>
                     <input type="text" [(ngModel)]="decimal" [ngModelOptions]="{standalone: true}" pInputText
-                        class="form-control" autofocus (input)="transformar('decimal')" />
+                        class="form-control" autofocus (input)="transformar('D')" />
                 </div>
                 <div class="mb-3">
                     <label for="octal" class="form-label">Octal</label>
                     <input type="text" [(ngModel)]="octal" [ngModelOptions]="{standalone: true}" pInputText
-                        class="form-control" autofocus (input)="transformar('octal')" />
+                        class="form-control" autofocus (input)="transformar('O')" />
                 </div>
                 <div class="mb-3">
                     <label for="hex" class="form-label">Hexadecimal</label>
                     <input type="text" [(ngModel)]="hexa" [ngModelOptions]="{standalone: true}" pInputText
-                        class="form-control" autofocus (input)="transformar('hex')" />
+                        class="form-control" autofocus (input)="transformar('H')" />
                 </div>
                 <div class="mb-3">
                     <label for="Binario" class="form-label">Binario Natural</label>
                     <input type="text" [(ngModel)]="binNat" [ngModelOptions]="{standalone: true}" pInputText
-                        class="form-control" autofocus (input)="transformar('binNat')" />
+                        class="form-control" autofocus (input)="transformar('BN')" />
                 </div>
                 <div class="mb-3">
                     <label for="Gray" class="form-label">Gray</label>
                     <input type="text" [(ngModel)]="gray" [ngModelOptions]="{standalone: true}" pInputText
-                        class="form-control" autofocus (input)="transformar('gray')" />
+                        class="form-control" autofocus (input)="transformar('G')" />
                 </div>
                 <div class="mb-3">
                     <label for="Johnson" class="form-label">Johnson</label>
                     <input type="text" [(ngModel)]="johnson" [ngModelOptions]="{standalone: true}" pInputText
-                        class="form-control" autofocus (input)="transformar('johnson')" />
+                        class="form-control" autofocus (input)="transformar('J')" />
                 </div>
                 <div class="mb-3">
                     <label for="ascii" class="form-label">ASCII</label>
                     <input type="text" [(ngModel)]="ascii" [ngModelOptions]="{standalone: true}" pInputText
-                        class="form-control" autofocus (input)="transformar('ascii')" />
+                        class="form-control" autofocus (input)="transformar('A')" />
                 </div>
 
 
@@ -109,7 +110,7 @@
                             <div class="col-9">
                                 <div class="grid">
                                     <div class="col-12">
-                                        <label for="origen" class="form-label">A partir de que valor deberia
+                                        <label for="origen" class="form-label">A partir de que/Hacia que valor deberia
                                             calcular?</label>
                                         <button type="button" pButton icon="pi pi-bars" label="Mostrar Opciones"
                                             (click)="menu.toggle($event)"></button>
@@ -118,18 +119,18 @@
                                             [menuWidth]="200"></p-slideMenu>
                                     </div>
                                     <div class="col-12">
-                                        <label for="paridad" class="form-label">Bit de Paridad</label>
+                                        <label for="paridad" class="form-label">Bit de Paridad {{text}}</label>
                                         <input type="text" [(ngModel)]="bitParidad"
                                             [ngModelOptions]="{standalone: true}" pInputText class="form-control"
-                                            autofocus (input)="transformar('bitParidad')" />
+                                            autofocus/><!--(input)="transformar('bitParidad')"-->
                                     </div>
                                     <div class="col-12">
-                                        <label for="haming" class="form-label">Haming</label>
+                                        <label for="haming" class="form-label">Haming {{text}}</label>
                                         <input type="text" [(ngModel)]="haming" [ngModelOptions]="{standalone: true}"
-                                            pInputText class="form-control" autofocus (input)="transformar('haming')" />
+                                            pInputText class="form-control" autofocus  /><!--(input)="transformar('haming')"-->
                                         <small *ngIf="hamingIncorrecto == true"
                                             class="text-danger">&nbsp;&nbsp;&nbsp;Error
-                                            detectado! La solucion seria :{{hamingCorrecto}}</small>
+                                            detectado! El valor correcto de Haming seria: <strong>{{hamingCorrecto}}</strong></small>
                                     </div>
                                 </div>
                             </div>
@@ -148,8 +149,10 @@
                             </div>
                             <div class="col-12">
                                 <div class="grid">
-                                    <div class="col-6"><p-button label="Limpiar" styleClass="p-button-warning" icon="pi pi-exclamation-triangle" (onClick)="limpiar()"></p-button></div>
-                                    <div class="col-6"><p-button label="Calcular" icon="pi pi-calculator" (onClick)="calcularHaming()"></p-button></div><!--calcularParidad();-->
+                                    <div class="col-3"><p-button label="Limpiar Datos Calculadora" styleClass="p-button-warning" icon="pi pi-exclamation-triangle" (onClick)="limpiar()"></p-button></div>
+                                    <div class="col-3"><p-button label="Calcular Desde Haming" icon="pi pi-calculator" (onClick)="calcularHamingGPT('from');"></p-button></div><!---->
+                                    <div class="col-3"><p-button label="Calcular Hacia Haming" styleClass="p-button-success" icon="pi pi-calculator" (onClick)="calcularHamingGPT('to');"></p-button></div>
+                                    <div class="col-3"><p-button label="Calcular bit Paridad" styleClass="p-button-secondary" icon="pi pi-calculator" (onClick)="calcularParidad();"></p-button></div>
                                 </div>
                                 
                             </div>

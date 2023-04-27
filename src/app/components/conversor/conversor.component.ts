@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-conversor',
@@ -32,6 +33,7 @@ export class ConversorComponent {
   haming: string = ""
   hamingCorrecto!: string
   hamingIncorrecto: boolean = false
+  text: string =""
 
   ubicaciones: any[] = [
     { name: 'Prefijo', key: 'P' },
@@ -44,7 +46,7 @@ export class ConversorComponent {
       label: 'Binario Natural',
       icon: 'pi pi-fw bi bi-tree-fill',
       command: () => {
-        this.selectedTipo = "N";
+        this.selectedTipo = "BN";
       }
     },
     {
@@ -145,40 +147,210 @@ export class ConversorComponent {
   ];
   selectedTipo: any = null
 
-  constructor() { }
+  constructor(private ms: MessageService) { }
 
   transformar(op: string) {
     switch (op) {
-      case "decimal":
+      case "D":
         var dec = Number(this.decimal)
         this.octal = dec.toString(8)
         this.hexa = dec.toString(16).toUpperCase()
         this.binNat = dec.toString(2)
         this.gray = this.binaryToGray(this.binNat)
-
+        console.log()
         this.ascii = String.fromCharCode(dec)
         this.bitParidad = this.insertarBitParidad(this.binNat, this.paridad, this.selectedUbicacion)
+        //this.calcularHamingGPT(this.binNat,"to")
 
         break;
-      case "octal":
+      case "O":
 
         break;
-      case "hexa":
+      case "H":
 
         break;
-      case "binNat":
+      case "BN":
+        this.decimal = parseInt(this.binNat, 2).toString()
+        var dec = Number(this.decimal)
+        this.octal = dec.toString(8)
+        this.hexa = dec.toString(16).toUpperCase()
+        this.gray = this.binaryToGray(this.binNat)
+        this.ascii = String.fromCharCode(dec)
+        this.bitParidad = this.insertarBitParidad(this.binNat, this.paridad, this.selectedUbicacion)
+        //this.calcularHamingGPT(this.binNat,"to")
 
         break;
-      case "gray":
+      case "G":
 
         break;
-      case "johnson":
+      case "J":
 
         break;
     }
   }
 
-  calcularHaming() {
+
+
+  calcularHamingGPT(op: string) {
+    console.log(this.paridad)
+    var str = ""
+    //SWITCH
+
+
+    switch (this.selectedTipo) {
+      case "BN":
+        str = this.binNat
+        break;
+      case "G":
+        str = this.gray
+        break;
+      case "J":
+        str = this.johnson
+        break;
+    }
+    //
+
+console.log(op)
+    if (op == "to") {
+      const d = str.split("").map(Number);
+      var ap1 = [d[0], d[2], d[3]]
+      var ap2 = [d[0], d[1], d[3]]
+      var ap3 = [d[0], d[1], d[2]]
+      var bp1 = ""
+      var bp2 = ""
+      var bp3 = ""
+      var array = [ap1, ap2, ap3]
+      var contador = 0;
+      var agregar = ""
+
+      array.forEach(miniArray => {
+        miniArray.forEach(element => {
+          if (element == 1)
+            contador = contador + 1
+        });
+
+        if (this.paridad == true) {
+          if (contador % 2 == 0)
+            agregar = (0).toString()
+          else
+            agregar = (1).toString()
+        }
+        else {
+          if (contador % 2 == 0)
+            agregar = (1).toString()
+          else
+            agregar = (0).toString()
+        }
+
+        if (miniArray == ap1) {
+          bp1 = agregar
+        }
+        else if (miniArray == ap2) {
+          bp2 = agregar
+        }
+        else {
+          bp3 = agregar
+        }
+        contador = 0;
+      });
+      console.log(d)
+      this.haming = d[0].toString() + d[1].toString() + d[2].toString() + bp3 + d[3].toString() + bp2 + bp1;
+      switch (this.selectedTipo) {
+        case "BN":
+          this.text= "desde Binario Natural"
+          break;
+        case "G":
+          this.text= "desde Gray"
+          break;
+        case "J":
+          this.text= "desde Johnson"
+          break;
+      }
+    }
+    else {
+      const d = this.haming.split("").map(Number);
+      console.log(d)
+      const p1 = (d[0] + d[2] + d[4]) % 2;
+      const p2 = (d[0] + d[1] + d[4]) % 2;
+      const p3 = (d[0] + d[1] + d[2]) % 2;
+      var errores = new Array<any>()
+      if (this.paridad == true) {
+        if (p1 != d[6]) {
+          errores.push({ p: "p1", proteccionArray: [0, 2, 3], proteccionHoja: [4, 2, 1] })
+        }
+        if (p2 != d[5]) {
+          errores.push({ p: "p2", proteccionArray: [0, 1, 3], proteccionHoja: [4, 3, 1] })
+        }
+        if (p3 != d[3]) {
+          errores.push({ p: "p3", proteccionArray: [0, 1, 2], proteccionHoja: [4, 3, 2] })
+        }
+      }
+      else {
+        if (p1 == d[6]) {
+          errores.push({ p: "p1", proteccionArray: [0, 2, 3], proteccionHoja: [4, 2, 1] })
+        }
+        if (p2 == d[5]) {
+          errores.push({ p: "p2", proteccionArray: [0, 1, 3], proteccionHoja: [4, 3, 1] })
+        }
+        if (p3 == d[3]) {
+          errores.push({ p: "p3", proteccionArray: [0, 1, 2], proteccionHoja: [4, 3, 2] })
+        }
+      }
+
+      if (errores.length != 0) {
+        if (errores.length == 3) {
+          d[0] = 1 - d[0]
+        }
+        else if (errores.length == 1) {
+          switch (errores[0].p) {
+            case "p1":
+              d[6] = 1 - d[6]
+              break;
+            case "p2":
+              d[5] = 1 - d[5]
+              break;
+            case "p3":
+              d[3] = 1 - d[3]
+              break;
+          }
+        }
+        else {
+          if (errores[0].p == "p2" && errores[1].p == "p3") {
+            d[1] = 1 - d[1]
+          }
+          else if (errores[0].p == "p1" && errores[1].p == "p3") {
+            d[2] = 1 - d[2]
+          }
+          else if (errores[0].p == "p1" && errores[1].p == "p2") {
+            d[4] = 1 - d[4]
+          }
+        }
+        this.hamingCorrecto = `${d[0]}${d[1]}${d[2]}${d[3]}${d[4]}${d[5]}${d[6]}`
+        this.hamingIncorrecto = true
+        this.ms.add({ severity: 'warn', summary: 'Se ha detectado un error!', detail: 'Se detecto un error en el dato ingresado, pero se pudo arreglarlo. El resultado se encuentra en la casilla correspondiente al mensaje destino' });
+
+      }
+      //SWITCH
+
+
+      switch (this.selectedTipo) {
+        case "BN":
+          this.text= "hacia Binario Natural"
+          this.binNat = `${d[0]}${d[1]}${d[2]}${d[4]}`
+          break;
+        case "G":
+          this.text= "hacia Gray"
+          this.gray = `${d[0]}${d[1]}${d[2]}${d[4]}`
+          break;
+        case "J":
+          this.text= "hacia Johnson"
+          this.johnson = `${d[0]}${d[1]}${d[2]}${d[4]}`
+          break;
+      }
+    }
+  }
+
+  /*calcularHaming() {
     if (this.haming == "") {
       var valorUsado = ""
       switch (this.selectedTipo) {
@@ -222,60 +394,44 @@ export class ConversorComponent {
         }
       }
       //
-      /*for (var i = 0; i < numero.length; i++) {
-        if (numero[i] == "P") {
-          ubicacionesP.push(i + 1)
-        }
-      }*/
-      //console.log(posicionesP)
-      console.log(ubicacionesP)
+      
       var proteccionesP = new Array<any>()
       for (var i = 0; i < ubicacionesP.length; i++) {
         for (var j = i + 1; j < ubicacionesP.length; j++) {
           var num = ubicacionesP[i] + ubicacionesP[j]
-          console.log("i vale " + i)
-          console.log("j vale " + j)
-          console.log("num vale " + num)
 
           if (proteccionesP.filter(element => element.posicion == i + 1).length != 0 || proteccionesP.filter(element => element.posicion == j + 1).length != 0) {
             if (proteccionesP.filter(element => element.posicion == i + 1).length != 0) {
               var index = proteccionesP.findIndex(element => element.posicion == i + 1)
-              console.log("a " + index)
               proteccionesP[index].proteccion.push(num)
             }
             if (proteccionesP.filter(element => element.posicion == j + 1).length != 0) {
               var index = proteccionesP.findIndex(element => element.posicion == j + 1)
-              console.log("B" + index)
               proteccionesP[index].proteccion.push(num)
             }
           }
           else {
-            console.log("c")
             proteccionesP.push({ posicion: i + 1, proteccion: [num] })
             proteccionesP.push({ posicion: j + 1, proteccion: [num] })
           }
         }
       };
-      console.log("LOL")
       proteccionesP.push({ posicion: ubicacionesP[ubicacionesP.length - 1], proteccion: [] })
       var suma = 0
       proteccionesP.forEach(element => {
         suma += element.posicion
       });
-      console.log(suma)
       for (var j = 0; j < ubicacionesP.length - 1; j++) {
         proteccionesP[proteccionesP.length - 1].proteccion.push(proteccionesP[j].posicion + proteccionesP[proteccionesP.length - 1].posicion)
       }
       proteccionesP.forEach(element => {
         element.proteccion.push(suma)
       });
-      console.log(proteccionesP)
       var contador = 0
       var agregar = ""
       proteccionesP.forEach(element => {
         element.proteccion.forEach((value: any) => {
           if (numero[value - 1] == (1).toString()) {
-            console.log(true)
             contador++
           }
         });
@@ -292,11 +448,9 @@ export class ConversorComponent {
           else
             agregar = (1).toString()
         }
-        console.log(contador)
         numero[element.posicion - 1] = agregar
         contador = 0
       });
-      console.log(numero)
       this.haming = ""
       for (var j = numero.length - 1; j >= 0; j--) {
         this.haming += numero[j]
@@ -319,59 +473,45 @@ export class ConversorComponent {
       for (var i = 0; i <= p - 1; i++) {
         posicionesP.push(Math.pow(2, i))
       }
-      console.log(posicionesP)
-      console.log("size: " + size)
-      console.log("P : " + p)
 
       var numero = new Array<string>()
       var proteccionesP = new Array<any>()
       for (var i = 0; i < posicionesP.length; i++) {
         for (var j = i + 1; j < posicionesP.length; j++) {
           var num = posicionesP[i] + posicionesP[j]
-          console.log("i vale " + i)
-          console.log("j vale " + j)
-          console.log("num vale " + num)
-
           if (proteccionesP.filter(element => element.posicion == i + 1).length != 0 || proteccionesP.filter(element => element.posicion == j + 1).length != 0) {
             if (proteccionesP.filter(element => element.posicion == i + 1).length != 0) {
               var index = proteccionesP.findIndex(element => element.posicion == i + 1)
-              console.log("a " + index)
               proteccionesP[index].proteccion.push(num)
             }
             if (proteccionesP.filter(element => element.posicion == j + 1).length != 0) {
               var index = proteccionesP.findIndex(element => element.posicion == j + 1)
-              console.log("B" + index)
               proteccionesP[index].proteccion.push(num)
             }
           }
           else {
-            console.log("c")
             proteccionesP.push({ posicion: i + 1, proteccion: [num] })
             proteccionesP.push({ posicion: j + 1, proteccion: [num] })
           }
         }
       };
-      console.log("LOL 2")
       proteccionesP.push({ posicion: posicionesP[posicionesP.length - 1], proteccion: [] })
       var suma = 0
       proteccionesP.forEach(element => {
         suma += element.posicion
       });
-      console.log(suma)
       for (var j = 0; j < posicionesP.length - 1; j++) {
         proteccionesP[proteccionesP.length - 1].proteccion.push(proteccionesP[j].posicion + proteccionesP[proteccionesP.length - 1].posicion)
       }
       proteccionesP.forEach(element => {
         element.proteccion.push(suma)
       });
-      console.log(proteccionesP)
-
-
 
       var contador = 0
       var comprobar = ""
+      var review = new Array<any>()
       var numeroAux = new Array<string>()
-      var band: boolean;
+      band = false;
       numero = []
       var l = 0
       for (var i = this.haming.length - 1; i >= 0; i--) {
@@ -379,15 +519,10 @@ export class ConversorComponent {
         l++
       }
 
-      console.log(numero)
-
-      //numeroAux = numero;
       proteccionesP.forEach(element => {
         element.proteccion.forEach((value: any) => {
-          if (numero[value - 1] == (1).toString()) {
-            console.log(true)
+          if (numero[value - 1] == (1).toString())
             contador++
-          }
         });
 
         if (this.paridad == true) {
@@ -402,59 +537,58 @@ export class ConversorComponent {
           else
             comprobar = (1).toString()
         }
-        console.log(contador)
-        console.log(numero)
-        console.log(numero[element.posicion - 1]) 
-        console.log(comprobar)
         if (numero[element.posicion - 1] != comprobar) {
           console.log("DISTINTO")
-          console.log(numero[element.posicion - 1])
-          console.log(comprobar)
-          numeroAux[element.posicion - 1] = comprobar
+          //          numeroAux[element.posicion - 1] = comprobar
+          review.push(numero[element.posicion - 1])
           band = true
-          /////SUS
         }
         contador = 0
       });
-      console.log(numero)
-      //this.haming = ""
-      if (band == true) {
-        console.log("band es true")
+      if (band != false) {
+        this.hamingCorrecto = "Todavia no se :)"
+        console.log(review)
         for (var j = numero.length - 1; j >= 0; j--) {
+          /*if
           this.hamingCorrecto += numeroAux[j]
+          console.log(review)
         }
         this.hamingIncorrecto = true
       }
       else {
         console.log("band es false")
-        console.log(this.haming)
-        console.log(numero)
-        console.log(proteccionesP)
-        console.log(posicionesP)
 
         var l = 0
-        for (var i = this.haming.length - 1; i >= 0; i--) {
-          if (posicionesP[l] - 1 != i)
-            numeroAux.push()
+        console.log(numero)
+        for (var i = 0; i < this.haming.length; i++) {
+          console.log(posicionesP[l])
+          console.log(i)
+          if (posicionesP[l] - 1 != i) {
+            numeroAux.push(numero[i])
+
+          }
           else
             l++
+          //else
+
         }
 
         console.log(numeroAux)
+        var aux = ""
+        for (var i = numeroAux.length - 1; i >= 0; i--) {
+          aux += numeroAux[i]
+        }
 
+        console.log(aux)
         switch (this.selectedTipo) {
           case "N":
-            this.binNat = ""
+            this.binNat = aux
+            this.ms.add({ severity: 'success', summary: 'Calculo Exitoso!', detail: 'El resultado se encuentra en la casilla correspondiente al mensaje destino' });
             break;
-
         }
       }
-
-
     }
-
-
-  }
+  }*/
 
   calcularParidad() {
     this.bitParidad = this.insertarBitParidad(this.binNat, this.paridad, this.selectedUbicacion)
@@ -465,9 +599,24 @@ export class ConversorComponent {
     this.haming = ""
     this.hamingIncorrecto = false
     this.hamingCorrecto = ""
+    this.text=""
   }
 
   binaryToGray(a: string) {
+    var size = a.length
+    var num = a[0]
+    for (var i = 1; i < size; i++) {
+      var aux = Number(a[i - 1]) + Number(a[i])
+      if (aux == 2 || aux == 0)
+        num = num + (0).toString()
+      else
+        num = num + (1).toString()
+    }
+    return num
+  }
+
+
+  grayToBinary(a: string){
     var size = a.length
     var num = a[0]
     for (var i = 1; i < size; i++) {
