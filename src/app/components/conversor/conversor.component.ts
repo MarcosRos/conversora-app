@@ -243,68 +243,80 @@ export class ConversorComponent {
         console.log("j vale " + j)
         console.log("num vale " + num)
 
-        if (proteccionesP.filter(element => element.posicion == i).length != 0 || proteccionesP.filter(element => element.posicion == j).length != 0) {
-          if (proteccionesP.filter(element => element.posicion == i).length != 0) {
-            var index = proteccionesP.findIndex(element => element.posicion == i)
+        if (proteccionesP.filter(element => element.posicion == i + 1).length != 0 || proteccionesP.filter(element => element.posicion == j + 1).length != 0) {
+          if (proteccionesP.filter(element => element.posicion == i + 1).length != 0) {
+            var index = proteccionesP.findIndex(element => element.posicion == i + 1)
             console.log("a " + index)
             proteccionesP[index].proteccion.push(num)
           }
-          if (proteccionesP.filter(element => element.posicion == j).length != 0) {
-            var index = proteccionesP.findIndex(element => element.posicion == j)
+          if (proteccionesP.filter(element => element.posicion == j + 1).length != 0) {
+            var index = proteccionesP.findIndex(element => element.posicion == j + 1)
             console.log("B" + index)
             proteccionesP[index].proteccion.push(num)
           }
         }
         else {
           console.log("c")
-          proteccionesP.push({ posicion: i, proteccion: [num] })
-          proteccionesP.push({ posicion: j, proteccion: [num] })
+          proteccionesP.push({ posicion: i + 1, proteccion: [num] })
+          proteccionesP.push({ posicion: j + 1, proteccion: [num] })
         }
       }
-
-
-
-
-
-
-
-
-      /*//proteccionesP.push({posicion: suma,proteccion: []})
-
-      
-      //var index = proteccionesP.findIndex(element => element.posicion == suma)
-
-      for(var j = 0; j < ubicacionesP.length;j++ ){
-      proteccionesP[index].proteccion.push(ubicacionesP[j])
-      }
-
-      proteccionesP.forEach(element => {
-        element.proteccion.push(suma)
-      });
-      
-        
-
-*/
-
-
-
     };
-
     console.log("LOL")
-
-    proteccionesP.push({ posicion: ubicacionesP[ubicacionesP.length - 1] , proteccion: []})
-    
-    /*for (i = 0; i < ubicacionesP.length; i++) {
-      proteccionesP[ubicacionesP[ubicacionesP.length - 1]].proteccion.push(proteccionesP[i].posicion)
-    }
-    /*var suma = 0
+    proteccionesP.push({ posicion: ubicacionesP[ubicacionesP.length - 1], proteccion: [] })
+    var suma = 0
     proteccionesP.forEach(element => {
       suma += element.posicion
-    });*/
+    });
+    console.log(suma)
+    for (var j = 0; j < ubicacionesP.length - 1; j++) {
+      proteccionesP[proteccionesP.length - 1].proteccion.push(proteccionesP[j].posicion + proteccionesP[proteccionesP.length - 1].posicion)
+    }
+
+    proteccionesP.forEach(element => {
+      element.proteccion.push(suma)
+    });
+
 
     console.log(proteccionesP)
+    var contador = 0
+    var agregar = ""
 
 
+    //for(var i =0 ; i<proteccionesP.length ; i++){
+    proteccionesP.forEach(element => {
+      element.proteccion.forEach((value: any) => {
+        if (numero[value - 1] == (1).toString()) {
+          console.log(true)
+          contador++
+        }
+      });
+      if (this.paridad == true) {
+        if (contador % 2 == 0)
+          agregar = (0).toString()
+        else
+          agregar = (1).toString()
+      }
+      else {
+        if (contador % 2 != 0)
+          agregar = (0).toString()
+        else
+          agregar = (1).toString()
+      }
+
+console.log(contador)
+      numero[element.posicion - 1] = agregar
+
+    });
+
+    console.log(numero)
+
+    this.haming = ""
+    for(var j= numero.length -1; j >= 0  ; j--){
+      
+      this.haming+= numero[j]
+
+    }
 
   }
 
