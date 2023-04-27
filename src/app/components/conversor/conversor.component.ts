@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { tabla_john_decimal } from 'src/data/tablaJhonDecimal';
 
 @Component({
   selector: 'app-conversor',
   templateUrl: './conversor.component.html',
   styleUrls: ['./conversor.component.css']
 })
-export class ConversorComponent {
+export class ConversorComponent implements OnInit {
 
   decimal!: string
   octal!: string
@@ -32,6 +33,10 @@ export class ConversorComponent {
   haming: string = ""
   hamingCorrecto!: string
   hamingIncorrecto: boolean = false
+
+  //TABLAS
+  tablaJhonDec!: Array<any>
+
 
   ubicaciones: any[] = [
     { name: 'Prefijo', key: 'P' },
@@ -146,6 +151,11 @@ export class ConversorComponent {
   selectedTipo: any = null
 
   constructor() { }
+  ngOnInit(): void {
+    
+    this.tablaJhonDec = tabla_john_decimal;
+
+  }
 
   transformar(op: string) {
     switch (op) {
@@ -155,6 +165,7 @@ export class ConversorComponent {
         this.hexa = dec.toString(16).toUpperCase()
         this.binNat = dec.toString(2)
         this.gray = this.binaryToGray(this.binNat)
+        this.johnson = this.decimalToJhonson(this.decimal)
 
         this.ascii = String.fromCharCode(dec)
         this.bitParidad = this.insertarBitParidad(this.binNat, this.paridad, this.selectedUbicacion)
@@ -479,6 +490,23 @@ export class ConversorComponent {
     }
     return num
   }
+
+  decimalToJhonson(a: string):string{
+    
+    let ax = ["0","1","2","3","4","5","6","7","8","9"]
+
+    let res = "";
+
+    for(let i=0; i<a.length ; i++){
+    
+      var y: number = Number(a[i])
+
+      res += "-"+this.tablaJhonDec[y].label
+    }
+
+    return res;
+  }
+
 
   insertarBitParidad(a: string, par: boolean, lugar: string) {
     var completo = ""
