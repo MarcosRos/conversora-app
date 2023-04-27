@@ -39,6 +39,62 @@
                 </div>
 
 
+                <div>
+                    <p-accordion>
+                        <p-accordionTab header="BCO">
+                            <div class="mb-3">
+                                <label for="bcoN" class="form-label">Natural</label>
+                                <input type="text" [(ngModel)]="bcoN" [ngModelOptions]="{standalone: true}" pInputText
+                                    class="form-control" autofocus (input)="transformar('bcoN')" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="bcoG" class="form-label">Gray</label>
+                                <input type="text" [(ngModel)]="bcoG" [ngModelOptions]="{standalone: true}" pInputText
+                                    class="form-control" autofocus (input)="transformar('bcoG')" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="bcoJ" class="form-label">Johnson</label>
+                                <input type="text" [(ngModel)]="bcoJ" [ngModelOptions]="{standalone: true}" pInputText
+                                    class="form-control" autofocus (input)="transformar('bcoJ')" />
+                            </div>
+                        </p-accordionTab>
+                        <p-accordionTab header="BCD">
+                            <div class="mb-3">
+                                <label for="bcdN" class="form-label">Natural</label>
+                                <input type="text" [(ngModel)]="bcdN" [ngModelOptions]="{standalone: true}" pInputText
+                                    class="form-control" autofocus (input)="transformar('bcdN')" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="bcdG" class="form-label">Gray</label>
+                                <input type="text" [(ngModel)]="bcdG" [ngModelOptions]="{standalone: true}" pInputText
+                                    class="form-control" autofocus (input)="transformar('bcdG')" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="bcdJ" class="form-label">Johnson</label>
+                                <input type="text" [(ngModel)]="bcdJ" [ngModelOptions]="{standalone: true}" pInputText
+                                    class="form-control" autofocus (input)="transformar('bcdJ')" />
+                            </div>
+                        </p-accordionTab>
+                        <p-accordionTab header="BCH">
+                            <div class="mb-3">
+                                <label for="bchN" class="form-label">Natural</label>
+                                <input type="text" [(ngModel)]="bchN" [ngModelOptions]="{standalone: true}" pInputText
+                                    class="form-control" autofocus (input)="transformar('bchN')" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="bchG" class="form-label">Gray</label>
+                                <input type="text" [(ngModel)]="bchG" [ngModelOptions]="{standalone: true}" pInputText
+                                    class="form-control" autofocus (input)="transformar('bchG')" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="bchJ" class="form-label">Johnson</label>
+                                <input type="text" [(ngModel)]="bchJ" [ngModelOptions]="{standalone: true}" pInputText
+                                    class="form-control" autofocus (input)="transformar('bchJ')" />
+                            </div>
+                        </p-accordionTab>
+                    </p-accordion>
+                </div>
+
                 <br>
                 <p-fieldset> <!--legend="Deteccion y correccion de errores">-->
                     <ng-template pTemplate="header">
@@ -88,9 +144,14 @@
                                     <p-toggleButton [(ngModel)]="paridad" onLabel="Par" offLabel="Impar"
                                         [ngModelOptions]="{standalone: true}"></p-toggleButton>
                                 </p-card>
-                                <div class="mt-3">
-                                    <p-button label="Calcular" icon="pi pi-calculator"></p-button>
+                                
+                            </div>
+                            <div class="col-12">
+                                <div class="grid">
+                                    <div class="col-6"><p-button label="Limpiar" styleClass="p-button-warning" icon="pi pi-exclamation-triangle" (onClick)="limpiar()"></p-button></div>
+                                    <div class="col-6"><p-button label="Calcular" icon="pi pi-calculator" (onClick)="calcularParidad(); calcularHaming()"></p-button></div>
                                 </div>
+                                
                             </div>
                         </div>
                     </div>

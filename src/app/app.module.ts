@@ -14,6 +14,7 @@ import { CardModule } from 'primeng/card';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { FieldsetModule } from 'primeng/fieldset';
 import { SlideMenuModule } from 'primeng/slidemenu';
+import { AccordionModule } from 'primeng/accordion';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,7 @@ import { SlideMenuModule } from 'primeng/slidemenu';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,BrowserAnimationsModule, FormsModule, ReactiveFormsModule, ButtonModule,InputTextModule,ToggleButtonModule,CardModule,RadioButtonModule,FieldsetModule,SlideMenuModule
+    AppRoutingModule,BrowserAnimationsModule, FormsModule, ReactiveFormsModule, ButtonModule,InputTextModule,ToggleButtonModule,CardModule,RadioButtonModule,FieldsetModule,SlideMenuModule,AccordionModule
   ],
   providers: [],
   bootstrap: [AppComponent]
