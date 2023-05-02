@@ -165,51 +165,56 @@ export class ConversorComponent implements OnInit {
       this.formValid = true;
   }
 
-  
+
   transformar(op: string) {
     var habilitado = true
     switch (op) {
       case "D":
-        var dec = Number(this.decimal)    
-        this.deTodou(dec,op);
+
+        //var dec = Number(this.decimal)    
+        if (this.decimal == '') {
+          habilitado = false
+        }
 
         break;
       case "O":
+        if (this.octal == '') {
+          habilitado = false
+        }
+        else
+          this.decimal = this.octalToDecimal(this.octal).toString() //no pasaba con toString
 
-      this.decimal = this.octalToDecimal(this.octal).toString() //no pasaba con toString
-      var dec = Number(this.decimal);
-      this.deTodou(dec,op);
 
         break;
       case "H":
-
-      this.decimal = this.hexToDecimal(this.hexa).toString();
-      var dec = Number(this.decimal)
-      this.deTodou(dec,op);
+        if (this.hexa == '') {
+          habilitado = false
+        }
+        else
+          this.decimal = this.hexToDecimal(this.hexa).toString();
 
         break;
       case "BN":
-        this.decimal = parseInt(this.binNat, 2).toString()
-        var dec = Number(this.decimal)
-        
-        this.deTodou(dec,op);
-        //this.calcularHamingGPT(this.binNat,"to")
-
+        if (this.binNat == '') {
+          habilitado = false
+        }
+        else
+          this.decimal = parseInt(this.binNat, 2).toString()
         break;
       case "G":
-
-        this.binNat =  this.grayToBinary(this.gray)
-        this.decimal = parseInt(this.binNat, 2).toString()
-        var dec = Number(this.decimal)
-        
-        this.deTodou(dec,op);
-
+        if (this.gray == '') {
+          habilitado = false
+        }
+        else {
+          this.binNat = this.grayToBinary(this.gray)
+          this.decimal = parseInt(this.binNat, 2).toString()
+        }
         break;
       case "J":
         if (this.johnson == "")
           habilitado = false
         else
-          console.log("Calcula Johnson")
+          this.decimal = this.JhonsonToDecimal(this.johnson)
         break;
       //  BCO
       case "BCON":
@@ -238,59 +243,44 @@ export class ConversorComponent implements OnInit {
           console.log("calcula BCDN")
         break;
       case "BCDJ":
-
-        this.decimal = this.JhonsonToDecimal(this.johnson)
-        var dec = Number(this.decimal)
-
-        this.deTodou(dec,op);
+        if (this.bcdJ == '') {
+          habilitado = false
+        }
+        else
+        //11100-11000
+          
 
         break;
     }
-  
+
+    if (habilitado == true) {
+      var dec = Number(this.decimal)
+      this.deTodou(dec, op);
+    }
   }
 
-  deTodou(dec: number,op:string){
+  deTodou(dec: number, op: string) {
 
-    if(op === "H"){
+    if (op != "H") {
+      this.hexa = dec.toString(16).toUpperCase()
+    }
+    if (op != "O") {
       this.octal = dec.toString(8)
+    }
+    if (op != "BN") {
       this.binNat = dec.toString(2)
-      this.gray = this.binaryToGray(this.binNat)   
-      this.johnson = this.decimalToJhonson(this.decimal)
     }
-    if(op === "O"){
-      this.hexa = dec.toString(16).toUpperCase()
-      this.binNat = dec.toString(2)
+    if (op != "G") {
+      //Probemos avr
       this.gray = this.binaryToGray(this.binNat)
-      this.johnson = this.decimalToJhonson(this.decimal)
     }
-    if(op === "D"){
-      this.octal = dec.toString(8)
-      this.hexa = dec.toString(16).toUpperCase()
-      this.binNat = dec.toString(2)
-      this.gray = this.binaryToGray(this.binNat)
+    if (op != "J") {
       this.johnson = this.decimalToJhonson(this.decimal)
-    }
-    if(op === "BN"){
-      this.octal = dec.toString(8)
-      this.hexa = dec.toString(16).toUpperCase()
-      this.gray = this.binaryToGray(this.binNat)
-      this.johnson = this.decimalToJhonson(this.decimal)
-    }
-    if(op === "G"){
-      this.octal = dec.toString(8)
-      this.hexa = dec.toString(16).toUpperCase()
-      this.johnson = this.decimalToJhonson(this.decimal)
-    }
-    if(op === "J"){
-      this.octal = dec.toString(8)
-      this.hexa = dec.toString(16).toUpperCase()
-      this.binNat = dec.toString(2)
-      this.gray = this.binaryToGray(this.binNat)
     }
 
-    this.ascii = String.fromCharCode(dec)    
-    this.bitParidad = this.insertarBitParidad(this.binNat, this.paridad, this.selectedUbicacion)
-    
+    this.ascii = String.fromCharCode(dec)
+    //this.bitParidad = this.insertarBitParidad(this.binNat, this.paridad, this.selectedUbicacion)
+
     this.bcoG = this.decimalToBcoGray(this.octal)
     this.bcdG = this.decimalToBcdGray(this.decimal)
     this.bchG = this.decimalToBchGray(this.hexa)//verif
@@ -300,32 +290,32 @@ export class ConversorComponent implements OnInit {
     let decimal = 0;
     let index = 0;
     const base = 16;
-  
+
     // Recorre los dígitos del número hexadecimal de derecha a izquierda
     for (let i = hex.length - 1; i >= 0; i--) {
       const digit = parseInt(hex[i], base);
       decimal += digit * Math.pow(base, index);
       index++;
     }
-  
+
     return decimal;
   }
-  
+
 
   octalToDecimal(octal: string): number {
     let decimal = 0;
     let index = 0;
     const base = 8;
-  
+
     // Recorre los dígitos del número octal de derecha a izquierda
     for (let i = octal.length - 1; i >= 0; i--) {
       const digit = parseInt(octal[i], base);
       decimal += digit * Math.pow(base, index);
       index++;
     }
-  
+
     return decimal;
-  }       
+  }
 
   calcularHamingGPT(op: string) {
     console.log(this.selectedTipo)
@@ -761,15 +751,15 @@ export class ConversorComponent implements OnInit {
         num = num + (0).toString()
       else
         num = num + (1).toString()*/
-        
+
 
   grayToBinary(gray: string): string {
     let binary = "";
     let size = gray.length;
-  
+
     // El primer bit es el mismo en Gray y en binario
     binary += gray[0];
-  
+
     // Recorre los bits restantes del número Gray
     for (let i = 1; i < size; i++) {
       // Si el bit en la posición i de Gray es 0, el bit en la posición i de binario es el mismo
@@ -781,12 +771,12 @@ export class ConversorComponent implements OnInit {
         binary += binary[i - 1] === "0" ? "1" : "0";
       }
 
-//
+      //
     }
-  
+
     return binary;
   }
-  
+
 
 
   //------------------------------------------------GAY------------------------------------------------------------
@@ -843,7 +833,7 @@ export class ConversorComponent implements OnInit {
     return res;
   }
 
-  JhonsonToDecimal(a: string): string{
+  JhonsonToDecimal(a: string): string {
     let res = "";
 
     let y = ""
@@ -852,26 +842,26 @@ export class ConversorComponent implements OnInit {
 
     let fn = 0
 
-    for(let i=0; i<a.length ; i++){
-    
-      if( a[i]=== "-" || i === a.length - 1){
+    for (let i = 0; i < a.length; i++) {
 
-        if(i=== a.length-1)fn = i+1; 
+      if (a[i] === "-" || i === a.length - 1) {
+
+        if (i === a.length - 1) fn = i + 1;
         else fn = i;
 
-        y = a.substring(ini,fn);
+        y = a.substring(ini, fn);
 
-        if(a[i]=== "-") ini = fn+1;
+        if (a[i] === "-") ini = fn + 1;
         else ini = fn
 
         this.tablaJhonDec.forEach(element => {
-          if(element.label === y){
-              res+= element.value.toString();
+          if (element.label === y) {
+            res += element.value.toString();
           }
         })
-        
+
       }
-      
+
     }
     return res;
   }
