@@ -172,56 +172,136 @@ export class ConversorComponent implements OnInit {
   }
 
 
+  
   transformar(op: string) {
     switch (op) {
       case "D":
-        var dec = Number(this.decimal)
-        this.octal = dec.toString(8)
-        this.hexa = dec.toString(16).toUpperCase()
-        this.binNat = dec.toString(2)
-        this.gray = this.binaryToGray(this.binNat)
 
-        this.ascii = String.fromCharCode(dec)
-       
-       
-        this.johnson = this.decimalToJhonson(this.decimal)
-
-        
-        this.bitParidad = this.insertarBitParidad(this.binNat, this.paridad, this.selectedUbicacion)
-        
-        this.bcoG = this.decimalToBcoGray(this.octal)
-        this.bcdG = this.decimalToBcdGray(this.decimal)
-        this.bchG = this.decimalToBchGray(this.hexa)//verif
-
+        var dec = Number(this.decimal)    
+        this.deTodou(dec,op);
 
         break;
       case "O":
 
+      this.decimal = this.octalToDecimal(this.octal).toString() //no pasaba con toString
+      var dec = Number(this.decimal);
+      this.deTodou(dec,op);
+
         break;
       case "H":
+
+      this.decimal = this.hexToDecimal(this.hexa).toString();
+      var dec = Number(this.decimal)
+      this.deTodou(dec,op);
 
         break;
       case "BN":
         this.decimal = parseInt(this.binNat, 2).toString()
         var dec = Number(this.decimal)
-        this.octal = dec.toString(8)
-        this.hexa = dec.toString(16).toUpperCase()
-        this.gray = this.binaryToGray(this.binNat)
-        this.ascii = String.fromCharCode(dec)
-        this.bitParidad = this.insertarBitParidad(this.binNat, this.paridad, this.selectedUbicacion)
+        
+        this.deTodou(dec,op);
         //this.calcularHamingGPT(this.binNat,"to")
 
         break;
       case "G":
 
+        this.binNat =  this.grayToBinary(this.gray)
+        this.decimal = parseInt(this.binNat, 2).toString()
+        var dec = Number(this.decimal)
+        
+        this.deTodou(dec,op);
+
         break;
       case "J":
 
+        this.decimal = this.JhonsonToDecimal(this.johnson)
+        var dec = Number(this.decimal)
+
+        this.deTodou(dec,op);
+
         break;
     }
+  
   }
 
+  deTodou(dec: number,op:string){
 
+    if(op === "H"){
+      this.octal = dec.toString(8)
+      this.binNat = dec.toString(2)
+      this.gray = this.binaryToGray(this.binNat)   
+      this.johnson = this.decimalToJhonson(this.decimal)
+    }
+    if(op === "O"){
+      this.hexa = dec.toString(16).toUpperCase()
+      this.binNat = dec.toString(2)
+      this.gray = this.binaryToGray(this.binNat)
+      this.johnson = this.decimalToJhonson(this.decimal)
+    }
+    if(op === "D"){
+      this.octal = dec.toString(8)
+      this.hexa = dec.toString(16).toUpperCase()
+      this.binNat = dec.toString(2)
+      this.gray = this.binaryToGray(this.binNat)
+      this.johnson = this.decimalToJhonson(this.decimal)
+    }
+    if(op === "BN"){
+      this.octal = dec.toString(8)
+      this.hexa = dec.toString(16).toUpperCase()
+      this.gray = this.binaryToGray(this.binNat)
+      this.johnson = this.decimalToJhonson(this.decimal)
+    }
+    if(op === "G"){
+      this.octal = dec.toString(8)
+      this.hexa = dec.toString(16).toUpperCase()
+      this.johnson = this.decimalToJhonson(this.decimal)
+    }
+    if(op === "J"){
+      this.octal = dec.toString(8)
+      this.hexa = dec.toString(16).toUpperCase()
+      this.binNat = dec.toString(2)
+      this.gray = this.binaryToGray(this.binNat)
+    }
+
+    this.ascii = String.fromCharCode(dec)    
+    this.bitParidad = this.insertarBitParidad(this.binNat, this.paridad, this.selectedUbicacion)
+    
+    this.bcoG = this.decimalToBcoGray(this.octal)
+    this.bcdG = this.decimalToBcdGray(this.decimal)
+    this.bchG = this.decimalToBchGray(this.hexa)//verif
+  }
+
+  hexToDecimal(hex: string): number {
+    let decimal = 0;
+    let index = 0;
+    const base = 16;
+  
+    // Recorre los dígitos del número hexadecimal de derecha a izquierda
+    for (let i = hex.length - 1; i >= 0; i--) {
+      const digit = parseInt(hex[i], base);
+      decimal += digit * Math.pow(base, index);
+      index++;
+    }
+  
+    return decimal;
+  }
+  
+
+  octalToDecimal(octal: string): number {
+    let decimal = 0;
+    let index = 0;
+    const base = 8;
+  
+    // Recorre los dígitos del número octal de derecha a izquierda
+    for (let i = octal.length - 1; i >= 0; i--) {
+      const digit = parseInt(octal[i], base);
+      decimal += digit * Math.pow(base, index);
+      index++;
+    }
+  
+    return decimal;
+  }
+  
 
   calcularHamingGPT(op: string) {
     console.log(this.paridad)
@@ -647,20 +727,28 @@ console.log(op)
     return num
   }
 
-
-
-  grayToBinary(a: string){
-    var size = a.length
-    var num = a[0]
-    for (var i = 1; i < size; i++) {
-      var aux = Number(a[i - 1]) + Number(a[i])
-      if (aux == 2 || aux == 0)
-        num = num + (0).toString()
-      else
-        num = num + (1).toString()
+  grayToBinary(gray: string): string {
+    let binary = "";
+    let size = gray.length;
+  
+    // El primer bit es el mismo en Gray y en binario
+    binary += gray[0];
+  
+    // Recorre los bits restantes del número Gray
+    for (let i = 1; i < size; i++) {
+      // Si el bit en la posición i de Gray es 0, el bit en la posición i de binario es el mismo
+      if (gray[i] === "0") {
+        binary += binary[i - 1];
+      }
+      // Si el bit en la posición i de Gray es 1, el bit en la posición i de binario es el inverso del bit en la posición i-1 de binario
+      else {
+        binary += binary[i - 1] === "0" ? "1" : "0";
+      }
     }
-    return num
+  
+    return binary;
   }
+  
 
 
   //------------------------------------------------GAY------------------------------------------------------------
@@ -724,6 +812,39 @@ console.log(op)
       res += "-"+this.tablaJhonDec[y].label
     }
 
+    return res;
+  }
+
+  JhonsonToDecimal(a: string): string{
+    let res = "";
+
+    let y = ""
+
+    let ini = 0
+
+    let fn = 0
+
+    for(let i=0; i<a.length ; i++){
+    
+      if( a[i]=== "-" || i === a.length - 1){
+
+        if(i=== a.length-1)fn = i+1; 
+        else fn = i;
+
+        y = a.substring(ini,fn);
+
+        if(a[i]=== "-") ini = fn+1;
+        else ini = fn
+
+        this.tablaJhonDec.forEach(element => {
+          if(element.label === y){
+              res+= element.value.toString();
+          }
+        })
+        
+      }
+      
+    }
     return res;
   }
 
