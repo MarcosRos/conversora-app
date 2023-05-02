@@ -228,19 +228,19 @@ export class ConversorComponent implements OnInit {
         break;
 
       //  BCO
-      case "BCON":
+      case "bcoN":
         if (this.bcoN == "")
           habilitado = false
         else
           this.decimal = this.bcxAllToDecimal(this.bcoN,this.tablaBCXnat,op)
         break;
-      case "BCOJ":
+      case "bcoJ":
         if (this.bcoJ == "")
           habilitado = false
         else
         this.decimal = this.bcxAllToDecimal(this.bcoJ,this.tablaBCOjhon,op)
         break;
-      case "BCOG":
+      case "bcoG":
         if (this.bcoG == "")
           habilitado = false
         else
@@ -248,13 +248,13 @@ export class ConversorComponent implements OnInit {
         break;
 
       //  BCD
-      case "BCDN":
+      case "bcdN":
         if (this.bcdN == "")
           habilitado = false
         else
           this.decimal = this.bcxAllToDecimal(this.bcdN,this.tablaBCXnat,op)
         break;
-      case "BCDJ":
+      case "bcdJ":
         if (this.bcdJ == '') {
           habilitado = false
         }
@@ -262,8 +262,8 @@ export class ConversorComponent implements OnInit {
         this.decimal= this.bcxAllToDecimal(this.bcdJ,this.tablaJhonDec,op)
         break;
       
-      case "BCDG":
-        if (this.bcdJ == '') {
+      case "bcdG":
+        if (this.bcdG == '') {
           habilitado = false
         }
         else
@@ -271,26 +271,34 @@ export class ConversorComponent implements OnInit {
         break;
 
       //  BCH
-      case "BCHN":
-        if (this.bcdN == "")
+      case "bchN":
+        if (this.bchN == "")
           habilitado = false
         else
           this.decimal = this.bcxAllToDecimal(this.bchN,this.tablaBCXnat,op)
         break;
-      case "BCHJ":
-        if (this.bcdJ == '') {
+      case "bchJ":
+        if (this.bchJ == '') {
           habilitado = false
         }
         else
         this.decimal= this.bcxAllToDecimal(this.bchJ,this.tablaBCHjhon,op)
         break;
       
-      case "BCHG":
-        if (this.bcdJ == '') {
+      case "bchG":
+        if (this.bchG == '') {
           habilitado = false
         }
-        else
-        this.decimal= this.bcxAllToDecimal(this.bchG,this.tablaBCHgray,op)
+        else{
+          console.log("aaaaaaaaaaaaaaaaaaaaaaaaaa")
+          this.decimal= this.bcxAllToDecimal(this.bchG,this.tablaBCHgray,op)
+          
+        }
+        
+        break;
+      
+      default:
+        console.log("keeeeeeeeeeeeeeeeeeeeeee")
         break;
 
 
@@ -882,6 +890,8 @@ export class ConversorComponent implements OnInit {
     let ini = 0
     let fn = 0
 
+    
+
     for (let i = 0; i < a.length; i++) {
 
       if (a[i] === "-" || i === a.length - 1) {
@@ -904,8 +914,8 @@ export class ConversorComponent implements OnInit {
 
     }
 
-    if(op == "BCOG" || op == "BCON" || op == "BCOJ" ) res = this.octalToDecimal(res).toString();
-    if(op == "BCHG" || op == "BCHN" || op == "BCHJ" ) res = this.hexToDecimal(res).toString();
+    if(op == "bcoG" || op == "bcoN" || op == "bcoJ" ) res = this.octalToDecimal(res).toString();
+    if(op == "bchG" || op == "bchN" || op == "bchJ" ) res = this.hexToDecimal(res).toString();
 
 
     return res;
