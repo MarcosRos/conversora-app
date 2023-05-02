@@ -37,11 +37,10 @@ export class ConversorComponent implements OnInit {
   haming: string = ""
   hamingCorrecto!: string
   hamingIncorrecto: boolean = false
-  text: string =""
+  text: string = ""
 
   //TABLAS
   tablaJhonDec!: Array<any>
-
   tablaBCOgray!: Array<any>
   tablaBCDgray!: Array<any>
   tablaBCHgray!: Array<any>
@@ -57,113 +56,91 @@ export class ConversorComponent implements OnInit {
     {
       label: 'Binario Natural',
       icon: 'pi pi-fw bi bi-tree-fill',
-      command: () => {
-        this.selectedTipo = "BN";
-      }
+      value: "BN"
     },
     {
       label: 'Gray',
       icon: 'pi pi-fw pi-pencil',
-      command: () => {
-        this.selectedTipo = "G";
-      }
+      value: "G"
     },
     {
       label: 'Johnson',
       icon: 'pi pi-fw pi-user',
-      command: () => {
-        this.selectedTipo = "J";
-      }
+      value: "J"
     },
     {
       label: 'BCD',
       icon: 'pi pi-fw pi-table',
-      items: [
+      children: [
         {
-          label: 'Natural',
+          label: 'BCD Natural',
           icon: 'bi bi-tree-fill',
-          command: () => {
-            this.selectedTipo = "BCDN";
-          }
+          value: "BCDN"
         },
         {
-          label: 'Johnson',
+          label: 'BCD Johnson',
           icon: 'pi pi-fw pi-user',
-          command: () => {
-            this.selectedTipo = "BCDJ";
-          }
+          value: "BCDJ"
         },
         {
-          label: 'Gray',
+          label: 'BCD Gray',
           icon: 'pi pi-fw pi-calendar-times',
-          command: () => {
-            this.selectedTipo = "BCDG";
-          }
+          value: "BCDG"
         }
       ]
     },
     {
       label: 'BCO',
       icon: 'pi pi-fw pi-table',
-      items: [
+      children: [
         {
-          label: 'Natural',
+          label: 'BCO Natural',
           icon: 'bi bi-tree-fill',
-          command: () => {
-            this.selectedTipo = "BCON";
-          }
+          value: "BCON"
         },
         {
-          label: 'Johnson',
+          label: 'BCO Johnson',
           icon: 'pi pi-fw pi-user',
-          command: () => {
-            this.selectedTipo = "BCOJ";
-          }
+          value: "BCOJ"
         },
         {
-          label: 'Gray',
+          label: 'BCO Gray',
           icon: 'pi pi-fw pi-calendar-times',
-          command: () => {
-            this.selectedTipo = "BCOG";
-          }
+          value: "BCOG"
         }
       ]
     },
     {
       label: 'BCH',
       icon: 'pi pi-fw pi-table',
-      items: [
+      children: [
         {
-          label: 'Natural',
+          label: 'BCH Natural',
           icon: 'bi bi-tree-fill',
-          command: () => {
-            this.selectedTipo = "BCHN";
-          }
+          value: "BCHN"
         },
         {
-          label: 'Johnson',
+          label: 'BCH Johnson',
           icon: 'pi pi-fw pi-user',
-          command: () => {
-            this.selectedTipo = "BCHJ";
-          }
+          value: "BCHJ"
         },
         {
-          label: 'Gray',
+          label: 'BCH Gray',
           icon: 'pi pi-fw pi-calendar-times',
-          command: () => {
-            this.selectedTipo = "BCHG";
-          }
+          value: "BCHG"
         }
       ]
     },
   ];
   selectedTipo: any = null
 
+  formValid: Boolean = false
+
 
   constructor(private ms: MessageService) { }
 
   ngOnInit(): void {
-    
+
     this.tablaJhonDec = tabla_john_decimal;
     this.tablaBCOgray = tabla_bcoGray;
     this.tablaBCDgray = tabla_bcdGray;
@@ -171,12 +148,28 @@ export class ConversorComponent implements OnInit {
 
   }
 
+  texto() {
+    if (this.selectedTipo == null)
+      return '...'
+    else
+      return this.selectedTipo.label
+  }
+
+  comprobarValor() {
+    if (this.selectedTipo.value == null) {
+      this.ms.add({ severity: 'error', summary: 'Valor Invalido!', detail: 'Por favor, seleccione un tipo de ' + this.selectedTipo.label + ' valido (Natural, Gray o Johnson)' });
+      this.selectedTipo = null;
+      this.formValid = false;
+    }
+    else
+      this.formValid = true;
+  }
 
   
   transformar(op: string) {
+    var habilitado = true
     switch (op) {
       case "D":
-
         var dec = Number(this.decimal)    
         this.deTodou(dec,op);
 
@@ -213,6 +206,38 @@ export class ConversorComponent implements OnInit {
 
         break;
       case "J":
+        if (this.johnson == "")
+          habilitado = false
+        else
+          console.log("Calcula Johnson")
+        break;
+      //  BCO
+      case "BCON":
+        if (this.bcoN == "")
+          habilitado = false
+        else
+          console.log("calcula BCON")
+        break;
+      case "BCOJ":
+        if (this.bcoJ == "")
+          habilitado = false
+        else
+          console.log("calcula BCOJ")
+        break;
+      case "BCOG":
+        if (this.bcoG == "")
+          habilitado = false
+        else
+          console.log("calcula BCOG")
+        break;
+      //  BCD
+      case "BCDN":
+        if (this.bcdN == "")
+          habilitado = false
+        else
+          console.log("calcula BCDN")
+        break;
+      case "BCDJ":
 
         this.decimal = this.JhonsonToDecimal(this.johnson)
         var dec = Number(this.decimal)
@@ -300,16 +325,15 @@ export class ConversorComponent implements OnInit {
     }
   
     return decimal;
-  }
-  
+  }       
 
   calcularHamingGPT(op: string) {
+    console.log(this.selectedTipo)
     console.log(this.paridad)
     var str = ""
     //SWITCH
 
-
-    switch (this.selectedTipo) {
+    switch (this.selectedTipo.value) {
       case "BN":
         str = this.binNat
         break;
@@ -322,7 +346,7 @@ export class ConversorComponent implements OnInit {
     }
     //
 
-console.log(op)
+    console.log(op)
     if (op == "to") {
       const d = str.split("").map(Number);
       var ap1 = [d[0], d[2], d[3]]
@@ -367,15 +391,15 @@ console.log(op)
       });
       console.log(d)
       this.haming = d[0].toString() + d[1].toString() + d[2].toString() + bp3 + d[3].toString() + bp2 + bp1;
-      switch (this.selectedTipo) {
+      switch (this.selectedTipo.value) {
         case "BN":
-          this.text= "desde Binario Natural"
+          this.text = "desde Binario Natural"
           break;
         case "G":
-          this.text= "desde Gray"
+          this.text = "desde Gray"
           break;
         case "J":
-          this.text= "desde Johnson"
+          this.text = "desde Johnson"
           break;
       }
     }
@@ -447,15 +471,15 @@ console.log(op)
 
       switch (this.selectedTipo) {
         case "BN":
-          this.text= "hacia Binario Natural"
+          this.text = "hacia Binario Natural"
           this.binNat = `${d[0]}${d[1]}${d[2]}${d[4]}`
           break;
         case "G":
-          this.text= "hacia Gray"
+          this.text = "hacia Gray"
           this.gray = `${d[0]}${d[1]}${d[2]}${d[4]}`
           break;
         case "J":
-          this.text= "hacia Johnson"
+          this.text = "hacia Johnson"
           this.johnson = `${d[0]}${d[1]}${d[2]}${d[4]}`
           break;
       }
@@ -711,7 +735,7 @@ console.log(op)
     this.haming = ""
     this.hamingIncorrecto = false
     this.hamingCorrecto = ""
-    this.text=""
+    this.text = ""
   }
 
   binaryToGray(a: string) {
@@ -726,6 +750,18 @@ console.log(op)
     }
     return num
   }
+
+
+  /*grayToBinary(a: string) {
+    var size = a.length
+    var num = a[0]
+    for (var i = 1; i < size; i++) {
+      var aux = Number(a[i - 1]) + Number(a[i])
+      if (aux == 2 || aux == 0)
+        num = num + (0).toString()
+      else
+        num = num + (1).toString()*/
+        
 
   grayToBinary(gray: string): string {
     let binary = "";
@@ -744,6 +780,8 @@ console.log(op)
       else {
         binary += binary[i - 1] === "0" ? "1" : "0";
       }
+
+//
     }
   
     return binary;
@@ -753,65 +791,55 @@ console.log(op)
 
   //------------------------------------------------GAY------------------------------------------------------------
 
-  decimalToBcoGray(a: string):string{
+  decimalToBcoGray(a: string): string {
 
     let res = "";
     let y: number
 
-    for(let i=0; i<a.length ; i++){
-        y = Number(a[i])
-      res += "-"+this.tablaBCOgray[y].label
+    for (let i = 0; i < a.length; i++) {
+      y = Number(a[i])
+      res += "-" + this.tablaBCOgray[y].label
     }
 
     return res;
   }
-  decimalToBcdGray(a: string):string{
+  decimalToBcdGray(a: string): string {
 
     let res = "";
     let y: number
 
-    for(let i=0; i<a.length ; i++){
-        y = Number(a[i])
-      res += "-"+this.tablaBCDgray[y].label
+    for (let i = 0; i < a.length; i++) {
+      y = Number(a[i])
+      res += "-" + this.tablaBCDgray[y].label
     }
 
     return res;
   }
-  decimalToBchGray(a: string):string{
 
-    let aux = ["A","B","C","D","E","F"]
-
+  decimalToBchGray(a: string): string {
+    let aux = ["A", "B", "C", "D", "E", "F"]
     let res = "";
     let y: number
-
-    for(let i=0; i<a.length ; i++){
-      
-      if(aux.indexOf(a[i])===-1){
+    for (let i = 0; i < a.length; i++) {
+      if (aux.indexOf(a[i]) === -1) {
         y = Number(a[i])
-        res += "-"+this.tablaBCHgray[y].label
-      }else{
+        res += "-" + this.tablaBCHgray[y].label
+      } else {
         y = aux.indexOf(a[i]);
-        res += "-"+this.tablaBCHgray[y+10].label
+        res += "-" + this.tablaBCHgray[y + 10].label
       }
-
     }
-
     return res;
   }
 
   //------------------------------------------------GAY------------------------------------------------------------
 
-  decimalToJhonson(a: string):string{
-
+  decimalToJhonson(a: string): string {
     let res = "";
-
-    for(let i=0; i<a.length ; i++){
-    
+    for (let i = 0; i < a.length; i++) {
       var y: number = Number(a[i])
-
-      res += "-"+this.tablaJhonDec[y].label
+      res += "-" + this.tablaJhonDec[y].label
     }
-
     return res;
   }
 
@@ -853,38 +881,39 @@ console.log(op)
     var completo = ""
     var agregar = ""
     var contador = 0
-    if (a.length % 2 == 0) {
-      for (var i = 0; i < a.length; i++) {
-        var aux = Number(a[i])
-        if (aux == 1)
-          contador = contador + 1
-      }
-      if (par == true) {
-        if (contador % 2 == 0)
-          agregar = (0).toString()
-        else
-          agregar = (1).toString()
-      }
-      else {
-        if (contador % 2 == 0)
-          agregar = (1).toString()
-        else
-          agregar = (0).toString()
-      }
 
-      if (lugar == "P")
-        completo = " | " + agregar + " | " + a
-      else if (lugar == "C") {
+    for (var i = 0; i < a.length; i++) {
+      var aux = Number(a[i])
+      if (aux == 1)
+        contador = contador + 1
+    }
+    if (par == true) {
+      if (contador % 2 == 0)
+        agregar = (0).toString()
+      else
+        agregar = (1).toString()
+    }
+    else {
+      if (contador % 2 == 0)
+        agregar = (1).toString()
+      else
+        agregar = (0).toString()
+    }
+
+    if (lugar == "P")
+      completo = " | " + agregar + " | " + a
+    else if (lugar == "C") {
+      if (a.length % 2 == 0) {
         var pos = Number(a.length / 2)
         var st1 = a.slice(0, pos)
         var st2 = a.slice(pos, a.length)
         completo = st1 + " | " + agregar + " | " + st2
       }
       else
-        completo = a + " | " + agregar + " | "
+        completo = "Ingrese un valor con una cantidad par de digitos"
     }
     else
-      completo = "Proximamente"
+      completo = a + " | " + agregar + " | "
     return completo
   }
 }

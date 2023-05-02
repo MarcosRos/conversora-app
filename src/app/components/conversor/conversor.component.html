@@ -112,25 +112,29 @@
                                     <div class="col-12">
                                         <label for="origen" class="form-label">A partir de que/Hacia que valor deberia
                                             calcular?</label>
-                                        <button type="button" pButton icon="pi pi-bars" label="Mostrar Opciones"
+                                        <p-treeSelect class="md:w-20rem w-full" containerStyleClass="w-full"
+                                            [(ngModel)]="selectedTipo" [ngModelOptions]="{standalone: true}"
+                                            [options]="tipos" placeholder="Selecciona un Sistema" selectionMode="single" (onNodeSelect)="comprobarValor()"></p-treeSelect>
+                                        <!--<button type="button" pButton icon="pi pi-bars" label="Mostrar Opciones"
                                             (click)="menu.toggle($event)"></button>
-
                                         <p-slideMenu #menu [model]="tipos" [popup]="true" [viewportHeight]="270"
-                                            [menuWidth]="200"></p-slideMenu>
+                                            [menuWidth]="200"></p-slideMenu>-->
                                     </div>
                                     <div class="col-12">
                                         <label for="paridad" class="form-label">Bit de Paridad {{text}}</label>
                                         <input type="text" [(ngModel)]="bitParidad"
                                             [ngModelOptions]="{standalone: true}" pInputText class="form-control"
-                                            autofocus/><!--(input)="transformar('bitParidad')"-->
+                                            autofocus /><!--(input)="transformar('bitParidad')"-->
                                     </div>
                                     <div class="col-12">
                                         <label for="haming" class="form-label">Haming {{text}}</label>
                                         <input type="text" [(ngModel)]="haming" [ngModelOptions]="{standalone: true}"
-                                            pInputText class="form-control" autofocus  /><!--(input)="transformar('haming')"-->
+                                            pInputText class="form-control"
+                                            autofocus /><!--(input)="transformar('haming')"-->
                                         <small *ngIf="hamingIncorrecto == true"
                                             class="text-danger">&nbsp;&nbsp;&nbsp;Error
-                                            detectado! El valor correcto de Haming seria: <strong>{{hamingCorrecto}}</strong></small>
+                                            detectado! El valor correcto de Haming seria:
+                                            <strong>{{hamingCorrecto}}</strong></small>
                                     </div>
                                 </div>
                             </div>
@@ -145,16 +149,34 @@
                                     <p-toggleButton [(ngModel)]="paridad" onLabel="Par" offLabel="Impar"
                                         [ngModelOptions]="{standalone: true}"></p-toggleButton>
                                 </p-card>
-                                
+
                             </div>
                             <div class="col-12">
                                 <div class="grid">
-                                    <div class="col-3"><p-button label="Limpiar Datos Calculadora" styleClass="p-button-warning" icon="pi pi-exclamation-triangle" (onClick)="limpiar()"></p-button></div>
-                                    <div class="col-3"><p-button label="Calcular Desde Haming" icon="pi pi-calculator" (onClick)="calcularHamingGPT('from');"></p-button></div><!---->
-                                    <div class="col-3"><p-button label="Calcular Hacia Haming" styleClass="p-button-success" icon="pi pi-calculator" (onClick)="calcularHamingGPT('to');"></p-button></div>
-                                    <div class="col-3"><p-button label="Calcular bit Paridad" styleClass="p-button-secondary" icon="pi pi-calculator" (onClick)="calcularParidad();"></p-button></div>
+                                    <div class="col-9">
+                                        <div class="grid">
+                                            <div class="col-1"><p-button styleClass="p-button-warning"
+                                                    icon="pi pi-trash" (onClick)="limpiar()"></p-button></div>
+                                            <div class="col-11">
+                                                <div class="grid">
+                                                    <div class="col-6"><p-button
+                                                            label="Calcular de Haming hacia {{texto()}}"
+                                                            icon="pi pi-calculator"
+                                                            (onClick)="calcularHamingGPT('from');" [disabled]="!formValid"></p-button></div>
+                                                    <!---->
+                                                    <div class="col-6"><p-button
+                                                            label="Calcular de {{texto()}} Hacia Haming"
+                                                            styleClass="p-button-success" icon="pi pi-calculator"
+                                                            (onClick)="calcularHamingGPT('to');" [disabled]="!formValid"></p-button></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!--label="Limpiar Datos Calculadora"-->
+                                    <div class="col-3"><p-button label="Calcular bit Paridad"
+                                            styleClass="p-button-secondary" icon="pi pi-calculator"
+                                            (onClick)="calcularParidad();" [disabled]="!formValid"></p-button></div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </div>
