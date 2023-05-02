@@ -192,9 +192,7 @@ export class ConversorComponent implements OnInit {
           habilitado = false
         }
         else
-          this.decimal = this.octalToDecimal(this.octal).toString() //no pasaba con toString
-
-
+          this.decimal = this.octalToDecimal(this.octal).toString() //Funca con decimales
         break;
       case "H":
         if (this.hexa == '') {
@@ -259,7 +257,7 @@ export class ConversorComponent implements OnInit {
           habilitado = false
         }
         else
-        this.decimal= this.bcxAllToDecimal(this.bcdJ,this.tablaJhonDec,op)
+          this.decimal= this.bcxAllToDecimal(this.bcdJ,this.tablaJhonDec,op)
         break;
       
       case "bcdG":
@@ -300,8 +298,6 @@ export class ConversorComponent implements OnInit {
       default:
         console.log("keeeeeeeeeeeeeeeeeeeeeee")
         break;
-
-
 
 
     }
@@ -393,14 +389,30 @@ export class ConversorComponent implements OnInit {
     let decimal = 0;
     let index = 0;
     const base = 8;
-
+    var arrOct = octal.split('.')
+    console.log(arrOct)
+    console.log(arrOct)
     // Recorre los dígitos del número octal de derecha a izquierda
-    for (let i = octal.length - 1; i >= 0; i--) {
+    for (let i = arrOct[0].length - 1; i >= 0; i--) {
       const digit = parseInt(octal[i], base);
       decimal += digit * Math.pow(base, index);
       index++;
     }
 
+    if (arrOct.length == 2) {
+      var decimalPart = 0
+      //var fraction  = Number('0.'+arrOct[1])
+      index = 1;
+      for (let i = 0; i < arrOct[1].length; i++) {
+        var power = Math.pow(base, -index)
+        const digit = Number(arrOct[1][i]) * power;
+        decimalPart += digit
+        index++;
+      }
+
+      decimal += decimalPart
+      decimal = Number(parseFloat(decimal.toString()).toFixed(5))
+    }
     return decimal;
   }
 
