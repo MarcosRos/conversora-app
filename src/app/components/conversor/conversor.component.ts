@@ -4,6 +4,9 @@ import { tabla_bcdGray } from 'src/data/tablaBCDgray';
 import { tabla_bchGray } from 'src/data/tablaBCHgray';
 import { tabla_bcoGray } from 'src/data/tablaBCOgray';
 import { tabla_john_decimal } from 'src/data/tablaJhonDecimal';
+import { tabla_bco_jhon } from 'src/data/tablaBCOjhon';
+import { tabla_bch_jhon } from 'src/data/tablaBCHjhon';
+import { tabla_bcxNat } from 'src/data/tablaBCXnat';
 
 @Component({
   selector: 'app-conversor',
@@ -40,10 +43,14 @@ export class ConversorComponent implements OnInit {
   text: string = ""
 
   //TABLAS
+  tablaBCOjhon!: Array<any>
+  tablaBCHjhon!: Array<any>
   tablaJhonDec!: Array<any>
   tablaBCOgray!: Array<any>
   tablaBCDgray!: Array<any>
   tablaBCHgray!: Array<any>
+  tablaBCXnat!: Array<any>
+
 
 
   ubicaciones: any[] = [
@@ -141,10 +148,13 @@ export class ConversorComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.tablaBCOjhon = tabla_bco_jhon;
+    this.tablaBCHjhon = tabla_bch_jhon;
     this.tablaJhonDec = tabla_john_decimal;
     this.tablaBCOgray = tabla_bcoGray;
     this.tablaBCDgray = tabla_bcdGray;
     this.tablaBCHgray = tabla_bchGray;
+    this.tablaBCXnat = tabla_bcxNat;
 
   }
 
@@ -214,43 +224,78 @@ export class ConversorComponent implements OnInit {
         if (this.johnson == "")
           habilitado = false
         else
-          this.decimal = this.JhonsonToDecimal(this.johnson)
+          this.decimal = this.bcxAllToDecimal(this.johnson,this.tablaJhonDec,op)
         break;
+
       //  BCO
       case "BCON":
         if (this.bcoN == "")
           habilitado = false
         else
-          console.log("calcula BCON")
+          this.decimal = this.bcxAllToDecimal(this.bcoN,this.tablaBCXnat,op)
         break;
       case "BCOJ":
         if (this.bcoJ == "")
           habilitado = false
         else
-          console.log("calcula BCOJ")
+        this.decimal = this.bcxAllToDecimal(this.bcoJ,this.tablaBCOjhon,op)
         break;
       case "BCOG":
         if (this.bcoG == "")
           habilitado = false
         else
-          console.log("calcula BCOG")
+        this.decimal = this.bcxAllToDecimal(this.bcoG,this.tablaBCOgray,op)
         break;
+
       //  BCD
       case "BCDN":
         if (this.bcdN == "")
           habilitado = false
         else
-          console.log("calcula BCDN")
+          this.decimal = this.bcxAllToDecimal(this.bcdN,this.tablaBCXnat,op)
         break;
       case "BCDJ":
         if (this.bcdJ == '') {
           habilitado = false
         }
         else
-        //11100-11000
-          
-
+        this.decimal= this.bcxAllToDecimal(this.bcdJ,this.tablaJhonDec,op)
         break;
+      
+      case "BCDG":
+        if (this.bcdJ == '') {
+          habilitado = false
+        }
+        else
+        this.decimal= this.bcxAllToDecimal(this.bcdG,this.tablaBCDgray,op)
+        break;
+
+      //  BCH
+      case "BCHN":
+        if (this.bcdN == "")
+          habilitado = false
+        else
+          this.decimal = this.bcxAllToDecimal(this.bchN,this.tablaBCXnat,op)
+        break;
+      case "BCHJ":
+        if (this.bcdJ == '') {
+          habilitado = false
+        }
+        else
+        this.decimal= this.bcxAllToDecimal(this.bchJ,this.tablaBCHjhon,op)
+        break;
+      
+      case "BCHG":
+        if (this.bcdJ == '') {
+          habilitado = false
+        }
+        else
+        this.decimal= this.bcxAllToDecimal(this.bchG,this.tablaBCHgray,op)
+        break;
+
+
+
+
     }
 
     if (habilitado == true) {
@@ -275,15 +320,49 @@ export class ConversorComponent implements OnInit {
       this.gray = this.binaryToGray(this.binNat)
     }
     if (op != "J") {
-      this.johnson = this.decimalToJhonson(this.decimal)
+      this.bcdN = this.allToBcxAll(this.decimal,this.tablaBCXnat)
     }
+
+    //BCO
+    if(op != "BCON"){
+      this.bcoN = this.allToBcxAll(this.octal,this.tablaBCXnat)
+    }
+    if(op != "BCOG"){
+      this.bcoG = this.allToBcxAll(this.octal,this.tablaBCOgray)
+    }
+    if(op != "BCOJ"){
+      this.bcoJ = this.allToBcxAll(this.octal,this.tablaBCOjhon)
+    }
+
+    //BCD
+    if(op != "BCDN"){
+      this.bcdN = this.allToBcxAll(this.decimal,this.tablaBCXnat)
+    }
+    if(op != "BCDG"){
+      this.bcdG = this.allToBcxAll(this.decimal,this.tablaBCDgray)
+    }
+    if(op != "BCDJ"){
+      this.bcdJ = this.allToBcxAll(this.decimal,this.tablaJhonDec)
+    }
+
+    //BCH
+    if(op != "BCHN"){
+      this.bchN = this.allToBcxAll(this.hexa,this.tablaBCXnat)
+    }
+    if(op != "BCHG"){
+      this.bchG = this.allToBcxAll(this.hexa,this.tablaBCHgray)
+    }
+    if(op != "BCHJ"){
+      this.bchJ = this.allToBcxAll(this.hexa,this.tablaBCHjhon)
+    }
+    
+
 
     this.ascii = String.fromCharCode(dec)
     //this.bitParidad = this.insertarBitParidad(this.binNat, this.paridad, this.selectedUbicacion)
 
-    this.bcoG = this.decimalToBcoGray(this.octal)
-    this.bcdG = this.decimalToBcdGray(this.decimal)
-    this.bchG = this.decimalToBchGray(this.hexa)//verif
+    
+
   }
 
   hexToDecimal(hex: string): number {
@@ -777,69 +856,30 @@ export class ConversorComponent implements OnInit {
     return binary;
   }
 
+  //--------------------------------------------------------------------------------------
 
-
-  //------------------------------------------------GAY------------------------------------------------------------
-
-  decimalToBcoGray(a: string): string {
-
-    let res = "";
-    let y: number
-
-    for (let i = 0; i < a.length; i++) {
-      y = Number(a[i])
-      res += "-" + this.tablaBCOgray[y].label
-    }
-
-    return res;
-  }
-  decimalToBcdGray(a: string): string {
-
-    let res = "";
-    let y: number
-
-    for (let i = 0; i < a.length; i++) {
-      y = Number(a[i])
-      res += "-" + this.tablaBCDgray[y].label
-    }
-
-    return res;
-  }
-
-  decimalToBchGray(a: string): string {
+  allToBcxAll(a: string, tabla: Array<any>){
     let aux = ["A", "B", "C", "D", "E", "F"]
     let res = "";
     let y: number
     for (let i = 0; i < a.length; i++) {
       if (aux.indexOf(a[i]) === -1) {
         y = Number(a[i])
-        res += "-" + this.tablaBCHgray[y].label
+        res += "-" + tabla[y].label
       } else {
         y = aux.indexOf(a[i]);
-        res += "-" + this.tablaBCHgray[y + 10].label
+        res += "-" + tabla[y + 10].label
       }
     }
-    return res;
+    return res.substring(1,res.length);;
   }
 
-  //------------------------------------------------GAY------------------------------------------------------------
+//------------------------------------------------------------
 
-  decimalToJhonson(a: string): string {
+  bcxAllToDecimal(a: string,tabla: Array<any>,op:string){
     let res = "";
-    for (let i = 0; i < a.length; i++) {
-      var y: number = Number(a[i])
-      res += "-" + this.tablaJhonDec[y].label
-    }
-    return res;
-  }
-
-  JhonsonToDecimal(a: string): string {
-    let res = "";
-
     let y = ""
-
     let ini = 0
-
     let fn = 0
 
     for (let i = 0; i < a.length; i++) {
@@ -854,7 +894,7 @@ export class ConversorComponent implements OnInit {
         if (a[i] === "-") ini = fn + 1;
         else ini = fn
 
-        this.tablaJhonDec.forEach(element => {
+        tabla.forEach(element => {
           if (element.label === y) {
             res += element.value.toString();
           }
@@ -863,9 +903,15 @@ export class ConversorComponent implements OnInit {
       }
 
     }
+
+    if(op == "BCOG" || op == "BCON" || op == "BCOJ" ) res = this.octalToDecimal(res).toString();
+    if(op == "BCHG" || op == "BCHN" || op == "BCHJ" ) res = this.hexToDecimal(res).toString();
+
+
     return res;
   }
 
+  
 
   insertarBitParidad(a: string, par: boolean, lugar: string) {
     var completo = ""
