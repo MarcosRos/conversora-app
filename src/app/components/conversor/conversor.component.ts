@@ -557,8 +557,9 @@ export class ConversorComponent implements OnInit {
       }
       //SWITCH
 
+      console.log(this.selectedTipo)
 
-      switch (this.selectedTipo) {
+      switch (this.selectedTipo.value) {
         case "BN":
           this.text = "hacia Binario Natural"
           this.binNat = `${d[0]}${d[1]}${d[2]}${d[4]}`
@@ -572,6 +573,8 @@ export class ConversorComponent implements OnInit {
           this.johnson = `${d[0]}${d[1]}${d[2]}${d[4]}`
           break;
       }
+
+      console.log(this.binNat)
     }
   }
 
