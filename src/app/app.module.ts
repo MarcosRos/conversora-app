@@ -17,7 +17,7 @@ import { SlideMenuModule } from 'primeng/slidemenu';
 import { AccordionModule } from 'primeng/accordion';
 import { ToastModule } from 'primeng/toast';
 import { TreeSelectModule } from 'primeng/treeselect';
-
+import { ToolbarModule } from 'primeng/toolbar';
 //Providers
 import { MessageService } from 'primeng/api';
 
@@ -28,7 +28,7 @@ import { MessageService } from 'primeng/api';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,BrowserAnimationsModule, FormsModule, ReactiveFormsModule, ButtonModule,InputTextModule,ToggleButtonModule,CardModule,RadioButtonModule,FieldsetModule,SlideMenuModule,AccordionModule, ToastModule,TreeSelectModule
+    AppRoutingModule,BrowserAnimationsModule, FormsModule, ReactiveFormsModule, ButtonModule,InputTextModule,ToggleButtonModule,CardModule,RadioButtonModule,FieldsetModule,SlideMenuModule,AccordionModule, ToastModule,TreeSelectModule,ToolbarModule
   ],
   providers: [MessageService],
   bootstrap: [AppComponent]

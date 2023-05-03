@@ -219,19 +219,19 @@ export class ConversorComponent implements OnInit {
         break;
 
       //  BCO
-      case "bcoN":
+      case "BCON":
         if (this.bcoN == "")
           habilitado = false
         else
           this.decimal = this.bcxAllToDecimal(this.bcoN, this.tablaBCXnat, op)
         break;
-      case "bcoJ":
+      case "BCOJ":
         if (this.bcoJ == "")
           habilitado = false
         else
           this.decimal = this.bcxAllToDecimal(this.bcoJ, this.tablaBCOjhon, op)
         break;
-      case "bcoG":
+      case "BCOG":
         if (this.bcoG == "")
           habilitado = false
         else
@@ -239,20 +239,20 @@ export class ConversorComponent implements OnInit {
         break;
 
       //  BCD
-      case "bcdN":
+      case "BCDN":
         if (this.bcdN == "")
           habilitado = false
         else
           this.decimal = this.bcxAllToDecimal(this.bcdN, this.tablaBCXnat, op)
         break;
-      case "bcdJ":
+      case "BCDJ":
         if (this.bcdJ == '')
           habilitado = false
         else
           this.decimal = this.bcxAllToDecimal(this.bcdJ, this.tablaJhonDec, op)
         break;
 
-      case "bcdG":
+      case "BCDG":
         if (this.bcdG == '')
           habilitado = false
         else
@@ -260,20 +260,20 @@ export class ConversorComponent implements OnInit {
         break;
 
       //  BCH
-      case "bchN":
+      case "BCHN":
         if (this.bchN == "")
           habilitado = false
         else
           this.decimal = this.bcxAllToDecimal(this.bchN, this.tablaBCXnat, op)
         break;
-      case "bchJ":
+      case "BCHJ":
         if (this.bchJ == '')
           habilitado = false
         else
           this.decimal = this.bcxAllToDecimal(this.bchJ, this.tablaBCHjhon, op)
         break;
 
-      case "bchG":
+      case "BCHG":
         if (this.bchG == '')
           habilitado = false
         else
@@ -424,7 +424,154 @@ export class ConversorComponent implements OnInit {
     return decimal;
   }
 
+
+  preCalculoHaming(op: string) {
+    if (this.selectedTipo.value == "BN" || this.selectedTipo.value == "G" || this.selectedTipo.value == "J")
+      this.calcularHamingGPT(op)
+    else {
+      var habilitado = true
+      var str = ""
+      switch (this.selectedTipo.value) {
+        case "BCON":
+          if (this.bcoN == "")
+            habilitado = false
+          else
+            str = this.bcoN
+          break;
+        case "BCOJ":
+          if (this.bcoJ == "")
+            habilitado = false
+          else
+            str = this.bcoJ
+          break;
+        case "BCOG":
+          if (this.bcoG == "")
+            habilitado = false
+          else
+            str = this.bcoG
+          break;
+
+        //  BCD
+        case "BCDN":
+          if (this.bcdN == "")
+            habilitado = false
+          else
+            str = this.bcdN
+          break;
+        case "BCDJ":
+          if (this.bcdJ == '')
+            habilitado = false
+          else
+            str = this.bcdJ
+          break;
+
+        case "BCDG":
+          if (this.bcdG == '')
+            habilitado = false
+          else
+            str = this.bcdG
+          break;
+
+        //  BCH
+        case "BCHN":
+          if (this.bchN == "")
+            habilitado = false
+          else
+            str = this.bchN
+          break;
+        case "BCHJ":
+          if (this.bchJ == '')
+            habilitado = false
+          else
+            str = this.bchJ
+          break;
+
+        case "BCHG":
+          if (this.bchG == '')
+            habilitado = false
+          else
+            str = this.bchG
+          break;
+        default:
+          habilitado = false
+          break;
+      }
+
+      if (op == "to" && habilitado == true) {
+        this.haming = ""
+        var arr = new Array<string>()
+        arr = str.split('-')
+        arr.forEach(element => {
+          this.haming += this.calcularHamingBC(op, element)
+          this.haming += " "
+        });
+        this.text = "desde " + this.selectedTipo.value
+        var txtPar
+        if (this.paridad == true)
+          txtPar = " Par"
+        else
+          txtPar = " Impar"
+        this.ms.add({ severity: 'success', summary: 'Calculo Exitoso!', detail: 'Se calculo el resultado ' + this.text + 'a haming con paridad' + txtPar });
+      }
+      else if (op == "from") {
+        this.hamingCorrecto = ""
+        str = this.haming;
+        var string = ""
+        console.log(str)
+        arr = str.split('-')
+        console.log(arr)
+        arr.forEach(element => {
+          string += this.calcularHamingBC(op, element)
+          string += "-"
+        });
+
+        string=string.slice(0,string.length-1)
+        this.text = "hacia " + this.selectedTipo.value
+        switch (this.selectedTipo.value) {
+          case "BCON":
+            this.bcoN = string
+            break;
+          case "BCOJ":
+            this.bcoJ = string
+            break;
+          case "BCOG":
+            this.bcoG = string
+            break;
+
+          //  BCD
+          case "BCDN":
+            this.bcdN = string
+            break;
+          case "BCDJ":
+            this.bcdJ = string
+            break;
+
+          case "BCDG":
+            this.bcdG = string
+            break;
+
+          //  BCH
+          case "BCHN":
+            this.bchN = string
+            break;
+          case "BCHJ":
+            this.bchJ = string
+            break;
+
+          case "BCHG":
+            this.bchG = string
+            break
+        }
+        this.ms.add({ severity: 'success', summary: 'Calculo Exitoso!', detail: 'Se calculo el resultado desde haming a ' + this.text + ' con paridad' + txtPar });
+
+      }
+      else
+        this.ms.add({ severity: 'error', summary: 'Error!', detail: 'Sistema Seleccionado no valido o El sistema seleccionado no tiene datos' });
+    }
+  }
+
   calcularHamingGPT(op: string) {
+    this.hamingIncorrecto = false;
     console.log(this.selectedTipo)
     console.log(this.paridad)
     var str = ""
@@ -442,6 +589,12 @@ export class ConversorComponent implements OnInit {
         break;
     }
     //
+
+    var txtPar
+    if (this.paridad == true)
+      txtPar = " Par"
+    else
+      txtPar = " Impar"
 
     console.log(op)
     if (op == "to") {
@@ -499,6 +652,8 @@ export class ConversorComponent implements OnInit {
           this.text = "desde Johnson"
           break;
       }
+
+      this.ms.add({ severity: 'success', summary: 'Calculo Exitoso!', detail: 'Se calculo el resultado ' + this.text + 'a haming con paridad' + txtPar });
     }
     else {
       const d = this.haming.split("").map(Number);
@@ -563,10 +718,6 @@ export class ConversorComponent implements OnInit {
         this.ms.add({ severity: 'warn', summary: 'Se ha detectado un error!', detail: 'Se detecto un error en el dato ingresado, pero se pudo arreglarlo. El resultado se encuentra en la casilla correspondiente al mensaje destino' });
 
       }
-      //SWITCH
-
-      console.log(this.selectedTipo)
-
       switch (this.selectedTipo.value) {
         case "BN":
           this.text = "hacia Binario Natural"
@@ -581,10 +732,144 @@ export class ConversorComponent implements OnInit {
           this.johnson = `${d[0]}${d[1]}${d[2]}${d[4]}`
           break;
       }
-
-      console.log(this.binNat)
+      if (errores.length == 0)
+        this.ms.add({ severity: 'success', summary: 'Calculo Exitoso!', detail: 'Se calculo el resultado desde Haming ' + this.text + ' con paridad' + txtPar });
     }
   }
+
+
+  calcularHamingBC(op: string, str: string) {
+    this.hamingIncorrecto = false;
+
+    // var txtPar
+    // if (this.paridad == true)
+    //   txtPar = " Par"
+    // else
+    //   txtPar = " Impar"
+
+    console.log(op)
+    if (op == "to") {
+      const d = str.split("").map(Number);
+      var ap1 = [d[0], d[2], d[3]]
+      var ap2 = [d[0], d[1], d[3]]
+      var ap3 = [d[0], d[1], d[2]]
+      var bp1 = ""
+      var bp2 = ""
+      var bp3 = ""
+      var array = [ap1, ap2, ap3]
+      var contador = 0;
+      var agregar = ""
+
+      array.forEach(miniArray => {
+        miniArray.forEach(element => {
+          if (element == 1)
+            contador = contador + 1
+        });
+
+        if (this.paridad == true) {
+          if (contador % 2 == 0)
+            agregar = (0).toString()
+          else
+            agregar = (1).toString()
+        }
+        else {
+          if (contador % 2 == 0)
+            agregar = (1).toString()
+          else
+            agregar = (0).toString()
+        }
+
+        if (miniArray == ap1) {
+          bp1 = agregar
+        }
+        else if (miniArray == ap2) {
+          bp2 = agregar
+        }
+        else {
+          bp3 = agregar
+        }
+        contador = 0;
+      });
+      console.log(d)
+      var haming = d[0].toString() + d[1].toString() + d[2].toString() + bp3 + d[3].toString() + bp2 + bp1;
+
+      return haming
+
+    }
+    else {
+      const d = str.split("").map(Number);
+      console.log(d)
+      const p1 = (d[0] + d[2] + d[4]) % 2;
+      const p2 = (d[0] + d[1] + d[4]) % 2;
+      const p3 = (d[0] + d[1] + d[2]) % 2;
+      var errores = new Array<any>()
+      if (this.paridad == true) {
+        if (p1 != d[6]) {
+          errores.push({ p: "p1", proteccionArray: [0, 2, 3], proteccionHoja: [4, 2, 1] })
+        }
+        if (p2 != d[5]) {
+          errores.push({ p: "p2", proteccionArray: [0, 1, 3], proteccionHoja: [4, 3, 1] })
+        }
+        if (p3 != d[3]) {
+          errores.push({ p: "p3", proteccionArray: [0, 1, 2], proteccionHoja: [4, 3, 2] })
+        }
+      }
+      else {
+        if (p1 == d[6]) {
+          errores.push({ p: "p1", proteccionArray: [0, 2, 3], proteccionHoja: [4, 2, 1] })
+        }
+        if (p2 == d[5]) {
+          errores.push({ p: "p2", proteccionArray: [0, 1, 3], proteccionHoja: [4, 3, 1] })
+        }
+        if (p3 == d[3]) {
+          errores.push({ p: "p3", proteccionArray: [0, 1, 2], proteccionHoja: [4, 3, 2] })
+        }
+      }
+
+      if (errores.length != 0) {
+        if (errores.length == 3) {
+          d[0] = 1 - d[0]
+        }
+        else if (errores.length == 1) {
+          switch (errores[0].p) {
+            case "p1":
+              d[6] = 1 - d[6]
+              break;
+            case "p2":
+              d[5] = 1 - d[5]
+              break;
+            case "p3":
+              d[3] = 1 - d[3]
+              break;
+          }
+        }
+        else {
+          if (errores[0].p == "p2" && errores[1].p == "p3") {
+            d[1] = 1 - d[1]
+          }
+          else if (errores[0].p == "p1" && errores[1].p == "p3") {
+            d[2] = 1 - d[2]
+          }
+          else if (errores[0].p == "p1" && errores[1].p == "p2") {
+            d[4] = 1 - d[4]
+          }
+        }
+        this.hamingCorrecto += `${d[0]}${d[1]}${d[2]}${d[3]}${d[4]}${d[5]}${d[6]}`
+        this.hamingIncorrecto = true
+        this.ms.add({ severity: 'warn', summary: 'Se ha detectado un error!', detail: 'Se detecto un error en el dato ingresado, pero se pudo arreglarlo. El resultado se encuentra en la casilla correspondiente al mensaje destino' });
+
+      }
+
+      var resultado = `${d[0]}${d[1]}${d[2]}${d[4]}`
+      return resultado
+
+      // if (errores.length == 0)
+      //   this.ms.add({ severity: 'success', summary: 'Calculo Exitoso!', detail: 'Se calculo el resultado desde Haming ' + this.text + ' con paridad' + txtPar });
+    }
+  }
+
+
+
 
   /*calcularHaming() {
     if (this.haming == "") {
@@ -827,7 +1112,113 @@ export class ConversorComponent implements OnInit {
   }*/
 
   calcularParidad() {
-    this.bitParidad = this.insertarBitParidad(this.binNat, this.paridad, this.selectedUbicacion)
+    var tabla = true
+    var habilitado = true
+    var str = ""
+    switch (this.selectedTipo.value) {
+      case "BN":
+        tabla = false
+        if (this.binNat == "")
+          habilitado = false
+        else
+          str = this.binNat
+        break;
+      case "G":
+        tabla = false
+        if (this.gray == "")
+          habilitado = false
+        else
+          str = this.gray
+        break;
+      case "J":
+        tabla = false
+        if (this.johnson == "")
+          habilitado = false
+        else
+          str = this.johnson
+        break;
+      case "BCON":
+        if (this.bcoN == "")
+          habilitado = false
+        else
+          str = this.bcoN
+        break;
+      case "BCOJ":
+        if (this.bcoJ == "")
+          habilitado = false
+        else
+          str = this.bcoJ
+        break;
+      case "BCOG":
+        if (this.bcoG == "")
+          habilitado = false
+        else
+          str = this.bcoG
+        break;
+
+      //  BCD
+      case "BCDN":
+        if (this.bcdN == "")
+          habilitado = false
+        else
+          str = this.bcdN
+        break;
+      case "BCDJ":
+        if (this.bcdJ == '')
+          habilitado = false
+        else
+          str = this.bcdJ
+        break;
+
+      case "BCDG":
+        if (this.bcdG == '')
+          habilitado = false
+        else
+          str = this.bcdG
+        break;
+
+      //  BCH
+      case "BCHN":
+        if (this.bchN == "")
+          habilitado = false
+        else
+          str = this.bchN
+        break;
+      case "BCHJ":
+        if (this.bchJ == '')
+          habilitado = false
+        else
+          str = this.bchJ
+        break;
+
+      case "BCHG":
+        if (this.bchG == '')
+          habilitado = false
+        else
+          str = this.bchG
+        break;
+      default:
+        habilitado = false
+        break;
+    }
+
+    if (habilitado == true) {
+      if (tabla == false)
+        this.bitParidad = this.insertarBitParidad(str, this.paridad, this.selectedUbicacion)
+      else {
+        this.bitParidad = ""
+        var arr = new Array<string>()
+        arr = str.split('-')
+        arr.forEach(element => {
+          this.bitParidad += this.insertarBitParidad(element, this.paridad, this.selectedUbicacion)
+          this.bitParidad += " "
+        });
+      }
+    }
+
+
+
+
   }
 
   limpiar() {
@@ -937,8 +1328,8 @@ export class ConversorComponent implements OnInit {
 
     }
 
-    if (op == "bcoG" || op == "bcoN" || op == "bcoJ") res = this.octalToDecimal(res).toString();
-    if (op == "bchG" || op == "bchN" || op == "bchJ") res = this.hexToDecimal(res).toString();
+    if (op == "BCOG" || op == "BCON" || op == "BCOJ") res = this.octalToDecimal(res).toString();
+    if (op == "BCHG" || op == "BCHN" || op == "BCHJ") res = this.hexToDecimal(res).toString();
 
 
     return res;
@@ -970,19 +1361,19 @@ export class ConversorComponent implements OnInit {
     }
 
     if (lugar == "P")
-      completo = " | " + agregar + " | " + a
+      completo = agregar + a
     else if (lugar == "C") {
       if (a.length % 2 == 0) {
         var pos = Number(a.length / 2)
         var st1 = a.slice(0, pos)
         var st2 = a.slice(pos, a.length)
-        completo = st1 + " | " + agregar + " | " + st2
+        completo = st1 + agregar + st2
       }
       else
         completo = "Ingrese un valor con una cantidad par de digitos"
     }
     else
-      completo = a + " | " + agregar + " | "
+      completo = a + agregar
     return completo
   }
 }
