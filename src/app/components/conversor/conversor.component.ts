@@ -140,7 +140,10 @@ export class ConversorComponent implements OnInit {
     },
   ];
   selectedTipo: any = null
+  selectedTipoComplementario: any = null
 
+  numComplementario: string = ""
+  resComplementario: string = ""
   formValid: Boolean = false
 
 
@@ -193,9 +196,9 @@ export class ConversorComponent implements OnInit {
       case "H":
         if (this.hexa == '')
           habilitado = false
-        else
+        else {
           this.decimal = this.hexToDecimal(this.hexa).toString();
-
+        }
         break;
       case "BN":
         if (this.binNat == '')
@@ -381,14 +384,40 @@ export class ConversorComponent implements OnInit {
     let decimal = 0;
     let index = 0;
     const base = 16;
-
+    var arrHex = new Array<string>()
+    arrHex = hex.split('.')
+    console.log(arrHex)
     // Recorre los dígitos del número hexadecimal de derecha a izquierda
-    for (let i = hex.length - 1; i >= 0; i--) {
-      const digit = parseInt(hex[i], base);
+    for (let i = arrHex[0].length - 1; i >= 0; i--) {
+      const digit = parseInt(arrHex[0][i], base);
       decimal += digit * Math.pow(base, index);
       index++;
     }
+    console.log(decimal)
+    console.log(arrHex)
+    console.log(arrHex[0])
+    console.log(arrHex[1])
 
+    if (arrHex.length == 2) {
+      var decimalPart = 0
+      //var fraction  = Number('0.'+arrOct[1])
+      index = 1;
+      for (let i = 0; i < arrHex[1].length; i++) {
+        console.log(decimalPart)
+        var power = Math.pow(base, -index)
+        console.log(power)
+        const digit = Number(parseInt(arrHex[1][i], base)) * power;
+        console.log(digit)
+        decimalPart += digit
+        index++;
+      }
+      console.log("decimalPart")
+      console.log(decimalPart)
+      decimal += decimalPart
+      decimal = Number(parseFloat(decimal.toString()).toFixed(5))
+    }
+    console.log("decimal")
+    console.log(decimal)
     return decimal;
   }
 
@@ -398,7 +427,6 @@ export class ConversorComponent implements OnInit {
     let index = 0;
     const base = 8;
     var arrOct = octal.split('.')
-    console.log(arrOct)
     console.log(arrOct)
     // Recorre los dígitos del número octal de derecha a izquierda
     for (let i = arrOct[0].length - 1; i >= 0; i--) {
@@ -424,6 +452,41 @@ export class ConversorComponent implements OnInit {
     return decimal;
   }
 
+
+  complementario() {
+    var len = this.numComplementario.length;
+    var max = "1"
+    var resta = "0"
+    var negativo = false
+    for (var i = 1; i < len - 1; i++) {
+      if (this.numComplementario[i] == ',' || this.numComplementario[i] == '.') {
+        max += '.'
+        resta += '.'
+      }
+      else {
+        max += "F"
+        resta += "0"
+      }
+    }
+    max += "F"
+    resta += "1"
+    if (this.numComplementario[0] == "1")
+      negativo = true
+    var a = this.hexToDecimal(max).toString()
+    var b = this.hexToDecimal(this.numComplementario).toString();
+    var restaDec = this.hexToDecimal(resta).toString();
+    var c = 0
+    c = Number(a) - Number(b) + Number(restaDec);
+    var final = ""
+
+    final = c.toString(16).toUpperCase()
+
+    if (negativo == true)
+      this.resComplementario = '-' + final
+    else
+      this.resComplementario = '+' + final.slice(1, final.length)
+    //return c.toString();
+  }
 
   preCalculoHaming(op: string) {
     if (this.selectedTipo.value == "BN" || this.selectedTipo.value == "G" || this.selectedTipo.value == "J")
@@ -525,45 +588,53 @@ export class ConversorComponent implements OnInit {
           string += "-"
         });
 
-        string=string.slice(0,string.length-1)
+        string = string.slice(0, string.length - 1)
         this.text = "hacia " + this.selectedTipo.value
         switch (this.selectedTipo.value) {
           case "BCON":
             this.bcoN = string
+            this.transformar("BCON")
             break;
           case "BCOJ":
             this.bcoJ = string
+            this.transformar("BCOJ")
             break;
           case "BCOG":
             this.bcoG = string
+            this.transformar("BCOG")
             break;
 
           //  BCD
           case "BCDN":
             this.bcdN = string
+            this.transformar("BCDN")
             break;
           case "BCDJ":
             this.bcdJ = string
+            this.transformar("BCDJ")
             break;
 
           case "BCDG":
             this.bcdG = string
+            this.transformar("BCDG")
             break;
 
           //  BCH
           case "BCHN":
             this.bchN = string
+            this.transformar("BCHN")
             break;
           case "BCHJ":
             this.bchJ = string
+            this.transformar("BCHJ")
             break;
 
           case "BCHG":
             this.bchG = string
+            this.transformar("BCHG")
             break
         }
         this.ms.add({ severity: 'success', summary: 'Calculo Exitoso!', detail: 'Se calculo el resultado desde haming a ' + this.text + ' con paridad' + txtPar });
-
       }
       else
         this.ms.add({ severity: 'error', summary: 'Error!', detail: 'Sistema Seleccionado no valido o El sistema seleccionado no tiene datos' });
@@ -734,6 +805,7 @@ export class ConversorComponent implements OnInit {
       }
       if (errores.length == 0)
         this.ms.add({ severity: 'success', summary: 'Calculo Exitoso!', detail: 'Se calculo el resultado desde Haming ' + this.text + ' con paridad' + txtPar });
+      this.transformar(this.selectedTipo.value)
     }
   }
 
