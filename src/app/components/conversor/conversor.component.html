@@ -104,7 +104,6 @@
                             <span class="font-bold text-lg">Deteccion y correccion de errores</span>
                         </div>
                     </ng-template>
-                    <form></form>
                     <div>
                         <div class="grid">
                             <div class="col-9">
@@ -188,6 +187,73 @@
                                         </div>
                                     </div>
                                 </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="grid">
+                        <div class="col-4">
+
+                            <p-button label="Limpiar Calculadora" styleClass="p-button-warning" icon="pi pi-trash"
+                                (onClick)="limpiar()"></p-button>
+
+                        </div>
+                    </div>
+
+                </p-fieldset>
+                <br>
+                <p-fieldset> <!--legend="Deteccion y correccion de errores">-->
+                    <ng-template pTemplate="header">
+                        <div class="flex align-items-center text-primary">
+                            <span class="pi pi-calculator mr-2"></span>
+                            <span class="font-bold text-lg">Calculo de Complementario</span>
+                        </div>
+                    </ng-template>
+                    <div>
+                        <div class="grid">
+                            
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <label for="origen" class="form-label">En que sistema se encuentra el valor
+                                                a calcular?</label>
+                                            <p-treeSelect class="md:w-20rem w-full" containerStyleClass="w-full"
+                                                [(ngModel)]="selectedTipoComplementario" [ngModelOptions]="{standalone: true}"
+                                                [options]="tipos" placeholder="Selecciona un Sistema"
+                                                selectionMode="single" (onNodeSelect)="comprobarValor()"></p-treeSelect>
+                                            <!--<button type="button" pButton icon="pi pi-bars" label="Mostrar Opciones"
+                                            (click)="menu.toggle($event)"></button>
+                                        <p-slideMenu #menu [model]="tipos" [popup]="true" [viewportHeight]="270"
+                                            [menuWidth]="200"></p-slideMenu>-->
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="hex" class="form-label">Valor a calcular Complementario</label>
+                                            <input type="text" [(ngModel)]="numComplementario"
+                                                [ngModelOptions]="{standalone: true}" pInputText class="form-control"
+                                                autofocus />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="hex" class="form-label">Resultado</label>
+                                            <input type="text" [(ngModel)]="resComplementario"
+                                                [ngModelOptions]="{standalone: true}" pInputText class="form-control"
+                                                autofocus [readOnly]="true"/><!--[disabled]="true"-->
+                                        </div>
+                                    </div>
+        
+                            <div class="col-12">
+                                <div class="grid">
+
+                                    <div class="col-6"><p-button label="Calcular valor complementario"
+                                            icon="pi pi-calculator" (onClick)="complementario();"
+                                            ></p-button></div>
+                                    <!--
+                                    <div class="col-6"><p-button label="Calcular de {{texto()}} Hacia Haming"
+                                            styleClass="p-button-success" icon="pi pi-calculator"
+                                            (onClick)="preCalculoHaming('to');" [disabled]="!formValid"></p-button>
+                                    </div>-->
+                                </div><!--label="Limpiar Datos Calculadora"-->
+
 
                             </div>
                         </div>
